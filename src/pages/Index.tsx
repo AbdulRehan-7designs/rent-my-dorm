@@ -17,6 +17,13 @@ import SettingsPage from '@/components/SettingsPage';
 import MyRentalsPage from '@/components/MyRentalsPage';
 import LeaderboardPage from '@/components/LeaderboardPage';
 
+// Extend the Window interface to include setCurrentView
+declare global {
+  interface Window {
+    setCurrentView: (view: string) => void;
+  }
+}
+
 const Index = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [currentView, setCurrentView] = useState('landing');
@@ -28,7 +35,9 @@ const Index = () => {
   useEffect(() => {
     window.setCurrentView = setCurrentView;
     return () => {
-      delete window.setCurrentView;
+      if (window.setCurrentView) {
+        delete window.setCurrentView;
+      }
     };
   }, []);
 
@@ -61,7 +70,7 @@ const Index = () => {
       case 'landing':
         return <LandingHero onLogin={handleLogin} />;
       case 'student-dashboard':
-        return <StudentDashboard user={currentUser} onLogout={handleLogout} />;
+        return <StudentDashboard user={currentUser} onLogout={handleLogout} onNavigate={setCurrentView} />;
       case 'vendor-dashboard':
         return <VendorDashboard user={currentUser} onLogout={handleLogout} />;
       case 'admin-dashboard':

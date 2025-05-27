@@ -22,7 +22,7 @@ import {
   Trophy
 } from 'lucide-react';
 
-const StudentDashboard = ({ user, onLogout }) => {
+const StudentDashboard = ({ user, onLogout, onNavigate }) => {
   const [activeSection, setActiveSection] = useState('overview');
 
   const stats = [
@@ -38,46 +38,33 @@ const StudentDashboard = ({ user, onLogout }) => {
     { id: 3, type: 'chat', item: 'Study Table', action: 'New message from Amit', time: '3 hours ago', status: 'unread' }
   ];
 
-  // Updated quickActions with proper navigation
+  // Updated quickActions with proper navigation using the prop
   const quickActions = [
     { 
       label: 'Browse Items', 
       icon: Search, 
-      action: () => window.dispatchEvent(new CustomEvent('navigate', { detail: 'browse-items' })), 
+      action: () => onNavigate('browse-items'), 
       color: 'bg-blue-500' 
     },
     { 
       label: 'AI Recognition', 
       icon: Camera, 
-      action: () => window.dispatchEvent(new CustomEvent('navigate', { detail: 'ai-object-recognition' })), 
+      action: () => onNavigate('ai-object-recognition'), 
       color: 'bg-purple-500' 
     },
     { 
       label: 'AI Recommendations', 
       icon: Brain, 
-      action: () => window.dispatchEvent(new CustomEvent('navigate', { detail: 'ai-recommendations' })), 
+      action: () => onNavigate('ai-recommendations'), 
       color: 'bg-green-500' 
     },
     { 
       label: 'Messages', 
       icon: MessageSquare, 
-      action: () => window.dispatchEvent(new CustomEvent('navigate', { detail: 'chat' })), 
+      action: () => onNavigate('chat'), 
       color: 'bg-orange-500' 
     }
   ];
-
-  // Add event listener for navigation
-  React.useEffect(() => {
-    const handleNavigate = (event) => {
-      // This will be handled by the parent component
-      if (window.setCurrentView) {
-        window.setCurrentView(event.detail);
-      }
-    };
-    
-    window.addEventListener('navigate', handleNavigate);
-    return () => window.removeEventListener('navigate', handleNavigate);
-  }, []);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -163,7 +150,7 @@ const StudentDashboard = ({ user, onLogout }) => {
           <div className="grid md:grid-cols-3 gap-6">
             <div 
               className="text-center p-4 bg-white/50 rounded-lg hover:bg-white/70 transition-colors cursor-pointer transform hover:scale-105 duration-300"
-              onClick={() => window.dispatchEvent(new CustomEvent('navigate', { detail: 'ai-object-recognition' }))}
+              onClick={() => onNavigate('ai-object-recognition')}
             >
               <Camera className="w-8 h-8 text-orange-500 mx-auto mb-3" />
               <h4 className="font-semibold mb-2">Object Recognition</h4>
@@ -171,7 +158,7 @@ const StudentDashboard = ({ user, onLogout }) => {
             </div>
             <div 
               className="text-center p-4 bg-white/50 rounded-lg hover:bg-white/70 transition-colors cursor-pointer transform hover:scale-105 duration-300"
-              onClick={() => window.dispatchEvent(new CustomEvent('navigate', { detail: 'ai-recommendations' }))}
+              onClick={() => onNavigate('ai-recommendations')}
             >
               <Brain className="w-8 h-8 text-purple-500 mx-auto mb-3" />
               <h4 className="font-semibold mb-2">Smart Recommendations</h4>
@@ -179,7 +166,7 @@ const StudentDashboard = ({ user, onLogout }) => {
             </div>
             <div 
               className="text-center p-4 bg-white/50 rounded-lg hover:bg-white/70 transition-colors cursor-pointer transform hover:scale-105 duration-300"
-              onClick={() => window.dispatchEvent(new CustomEvent('navigate', { detail: 'chat' }))}
+              onClick={() => onNavigate('chat')}
             >
               <MessageSquare className="w-8 h-8 text-blue-500 mx-auto mb-3" />
               <h4 className="font-semibold mb-2">Smart Chat</h4>
