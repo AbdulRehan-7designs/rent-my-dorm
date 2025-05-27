@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -11,6 +12,10 @@ import ChatInterface from '@/components/ChatInterface';
 import Navigation from '@/components/Navigation';
 import AIObjectRecognition from '@/components/AIObjectRecognition';
 import AIRecommendations from '@/components/AIRecommendations';
+import ProfilePage from '@/components/ProfilePage';
+import SettingsPage from '@/components/SettingsPage';
+import MyRentalsPage from '@/components/MyRentalsPage';
+import LeaderboardPage from '@/components/LeaderboardPage';
 
 const Index = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -61,6 +66,14 @@ const Index = () => {
         return <AIObjectRecognition onBack={() => setCurrentView('student-dashboard')} />;
       case 'ai-recommendations':
         return <AIRecommendations onBack={() => setCurrentView('student-dashboard')} user={currentUser} />;
+      case 'profile':
+        return <ProfilePage user={currentUser} onBack={() => setCurrentView('student-dashboard')} />;
+      case 'settings':
+        return <SettingsPage onBack={() => setCurrentView('student-dashboard')} />;
+      case 'my-rentals':
+        return <MyRentalsPage onBack={() => setCurrentView('student-dashboard')} />;
+      case 'leaderboard':
+        return <LeaderboardPage user={currentUser} onBack={() => setCurrentView('student-dashboard')} />;
       default:
         return <LandingHero onLogin={handleLogin} />;
     }

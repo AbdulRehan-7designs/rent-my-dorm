@@ -79,45 +79,44 @@ const LandingHero = ({ onLogin }) => {
               India's First AI-Powered Campus Rental Platform
             </p>
             
-            <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
+            <p className="text-lg text-white/80 mb-12 max-w-2xl mx-auto">
               From books to laptops, furniture to gadgets - rent, lend, and earn within your college community. 
               Built for Indian students, by Indian students! 🇮🇳
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-8">
-              {/* Enhanced Sign In Button */}
+            {/* Main Sign In Button */}
+            <div className="flex justify-center mb-8">
               <div className="group relative">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
                 <Button 
                   size="lg" 
-                  className="relative bg-white text-orange-600 hover:bg-orange-50 px-12 py-6 text-xl font-bold rounded-2xl shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 border-2 border-white/20"
+                  className="relative bg-white text-orange-600 hover:bg-orange-50 px-16 py-8 text-2xl font-bold rounded-2xl shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 border-2 border-white/20"
                   onClick={() => {
                     setAuthType('login');
                     setShowAuthModal(true);
                   }}
                 >
-                  <Sparkles className="w-6 h-6 mr-3 text-orange-500" />
-                  Sign In with AI Magic
+                  <Sparkles className="w-8 h-8 mr-4 text-orange-500" />
+                  Sign In to RentMyDorm
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12"></div>
                 </Button>
               </div>
-              
-              {/* Enhanced Sign Up Button */}
-              <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-500 to-violet-500 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="relative border-2 border-white text-white hover:bg-white hover:text-orange-600 px-12 py-6 text-xl font-bold rounded-2xl backdrop-blur-sm transform hover:scale-105 transition-all duration-300 shadow-2xl"
-                  onClick={() => {
-                    setAuthType('signup');
-                    setShowAuthModal(true);
-                  }}
-                >
-                  <Brain className="w-6 h-6 mr-3" />
-                  Start Your AI Journey
-                </Button>
-              </div>
+            </div>
+
+            {/* Semi-transparent AI Journey Button */}
+            <div className="group relative inline-block mb-8">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="relative border-2 border-white/50 text-white/80 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:text-white px-12 py-6 text-xl font-bold rounded-2xl transform hover:scale-105 transition-all duration-300 shadow-lg"
+                onClick={() => {
+                  setAuthType('signup');
+                  setShowAuthModal(true);
+                }}
+              >
+                <Brain className="w-6 h-6 mr-3" />
+                Start Your AI Journey
+              </Button>
             </div>
 
             <div className="flex flex-wrap justify-center gap-4">
@@ -176,32 +175,6 @@ const LandingHero = ({ onLogin }) => {
                 <div className="text-gray-600 font-medium">{stat.label}</div>
               </div>
             ))}
-          </div>
-        </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className="py-20 bg-gradient-to-r from-orange-600 to-red-600">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Ready to Transform Your Campus Experience with AI?
-          </h2>
-          <p className="text-xl text-white/90 mb-8">
-            Join thousands of students already using smart technology to save money and build connections
-          </p>
-          <div className="group relative inline-block">
-            <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-pink-500 rounded-3xl blur opacity-75 group-hover:opacity-100 transition duration-1000"></div>
-            <Button 
-              size="lg" 
-              className="relative bg-white text-orange-600 hover:bg-orange-50 px-16 py-6 text-2xl font-bold rounded-3xl shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300"
-              onClick={() => {
-                setAuthType('signup');
-                setShowAuthModal(true);
-              }}
-            >
-              <Bot className="w-8 h-8 mr-4" />
-              Get Started with AI Free
-            </Button>
           </div>
         </div>
       </div>
