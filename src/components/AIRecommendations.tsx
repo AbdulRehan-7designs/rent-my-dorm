@@ -4,274 +4,319 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Brain, TrendingUp, Star, Clock, MapPin, ArrowLeft, Sparkles, Target, Zap, Filter } from 'lucide-react';
-import { toast } from "@/hooks/use-toast";
+import { 
+  ArrowLeft, 
+  Brain, 
+  Star, 
+  TrendingUp, 
+  Target,
+  Zap,
+  Heart,
+  MapPin,
+  Clock,
+  Filter,
+  Sparkles,
+  ThumbsUp,
+  Eye
+} from 'lucide-react';
 
 const AIRecommendations = ({ onBack, user }) => {
   const [recommendations, setRecommendations] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedFilter, setSelectedFilter] = useState('all');
 
-  // Mock AI recommendations data
-  const mockRecommendations = [
+  const filters = [
+    { id: 'all', name: 'All Recommendations', icon: Sparkles },
+    { id: 'trending', name: 'Trending Now', icon: TrendingUp },
+    { id: 'nearby', name: 'Near You', icon: MapPin },
+    { id: 'budget', name: 'Budget Friendly', icon: Target }
+  ];
+
+  const aiRecommendations = [
     {
       id: 1,
-      title: 'MacBook Pro 13" M1',
-      description: 'Perfect for your Computer Science coursework',
-      price: 1800,
-      aiReason: 'Based on your CS major and previous laptop searches',
-      confidence: 95,
-      category: 'electronics',
-      owner: 'Arjun Sharma',
-      college: 'IIT Delhi',
+      title: 'Gaming Laptop - ASUS ROG',
+      description: 'Perfect for your Computer Science projects',
+      price: '₹1,200/day',
       rating: 4.9,
+      reviews: 18,
+      location: 'IIT Delhi - 0.5km away',
+      owner: 'Arjun Singh',
+      reason: 'Recommended because you frequently rent tech items and have upcoming project deadlines',
+      confidence: 92,
+      category: 'electronics',
       image: '/placeholder.svg',
-      trending: true,
-      matchScore: 'Excellent Match'
+      aiInsights: [
+        'High demand in your area',
+        'Perfect for gaming and coding',
+        '95% positive reviews'
+      ]
     },
     {
       id: 2,
-      title: 'Data Structures & Algorithms Book Set',
-      description: 'Complete collection for competitive programming',
-      price: 600,
-      aiReason: 'Your recent search for programming books',
+      title: 'Data Structures & Algorithms Books',
+      description: 'Complete set with practice problems',
+      price: '₹80/week',
+      rating: 4.7,
+      reviews: 25,
+      location: 'Your College Library',
+      owner: 'Priya Sharma',
+      reason: 'Based on your Computer Science branch and exam schedule',
       confidence: 88,
       category: 'books',
-      owner: 'Priya Singh',
-      college: 'NIT Trichy',
-      rating: 4.7,
       image: '/placeholder.svg',
-      seasonal: true,
-      matchScore: 'Great Match'
+      aiInsights: [
+        'Exam season approaching',
+        'High rating from CS students',
+        'Recently updated edition'
+      ]
     },
     {
       id: 3,
-      title: 'Study Desk with LED Light',
-      description: 'Ergonomic design perfect for long study sessions',
-      price: 1200,
-      aiReason: 'Students in your hostel often rent furniture',
-      confidence: 92,
-      category: 'furniture',
-      owner: 'Rahul Patel',
-      college: 'BITS Pilani',
+      title: 'Professional Camera Kit',
+      description: 'DSLR with multiple lenses for events',
+      price: '₹800/day',
       rating: 4.8,
+      reviews: 12,
+      location: 'VIT Vellore - 2km away',
+      owner: 'Rahul Gupta',
+      reason: 'You showed interest in photography equipment last month',
+      confidence: 76,
+      category: 'electronics',
       image: '/placeholder.svg',
-      popular: true,
-      matchScore: 'Perfect Match'
+      aiInsights: [
+        'Cultural fest season',
+        'Professional quality',
+        'Includes editing software'
+      ]
+    },
+    {
+      id: 4,
+      title: 'Ergonomic Study Chair',
+      description: 'Comfortable chair for long study sessions',
+      price: '₹150/day',
+      rating: 4.6,
+      reviews: 31,
+      location: 'NIT Trichy - 1km away',
+      owner: 'Sneha Patel',
+      reason: 'AI detected you spend 8+ hours studying daily',
+      confidence: 85,
+      category: 'furniture',
+      image: '/placeholder.svg',
+      aiInsights: [
+        'Reduces back strain',
+        'Popular among students',
+        'Easy pickup/delivery'
+      ]
     }
   ];
 
   useEffect(() => {
     // Simulate AI processing
+    setIsLoading(true);
     setTimeout(() => {
-      setRecommendations(mockRecommendations);
-      setLoading(false);
-      toast({
-        title: "AI Recommendations Ready! 🎯",
-        description: "Personalized suggestions based on your preferences",
-      });
+      setRecommendations(aiRecommendations);
+      setIsLoading(false);
     }, 2000);
   }, []);
 
-  const categories = [
-    { id: 'all', name: 'All Recommendations' },
-    { id: 'electronics', name: 'Electronics' },
-    { id: 'books', name: 'Books' },
-    { id: 'furniture', name: 'Furniture' }
-  ];
+  const filteredRecommendations = recommendations.filter(item => {
+    if (selectedFilter === 'all') return true;
+    if (selectedFilter === 'trending') return item.confidence > 85;
+    if (selectedFilter === 'nearby') return item.location.includes('0.5km') || item.location.includes('1km');
+    if (selectedFilter === 'budget') return parseInt(item.price.replace('₹', '')) < 500;
+    return true;
+  });
 
-  const filteredRecommendations = selectedCategory === 'all' 
-    ? recommendations 
-    : recommendations.filter(item => item.category === selectedCategory);
-
-  const getMatchColor = (score) => {
-    switch (score) {
-      case 'Perfect Match': return 'bg-green-100 text-green-800';
-      case 'Excellent Match': return 'bg-blue-100 text-blue-800';
-      case 'Great Match': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            onClick={onBack}
-            className="mr-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center mb-8">
+          <Button variant="ghost" onClick={onBack} className="mr-4">
+            <ArrowLeft className="w-5 h-5" />
           </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-              <Brain className="w-8 h-8 mr-3 text-purple-600" />
-              AI Smart Recommendations
-            </h1>
-            <p className="text-gray-600 mt-2">Personalized suggestions powered by machine learning</p>
-          </div>
+          <h1 className="text-3xl font-bold text-gray-900">AI Recommendations</h1>
         </div>
         
-        <div className="flex items-center space-x-4">
-          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2">
-            <Sparkles className="w-4 h-4 mr-2" />
-            AI Powered
-          </Badge>
+        <div className="text-center py-12">
+          <div className="relative w-20 h-20 mx-auto mb-6">
+            <Brain className="w-20 h-20 text-purple-500 animate-pulse" />
+            <div className="absolute inset-0 border-4 border-purple-200 rounded-full animate-spin border-t-purple-500"></div>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">AI is analyzing your preferences...</h3>
+          <p className="text-gray-600">Finding the perfect items just for you</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Header */}
+      <div className="flex items-center mb-8">
+        <Button variant="ghost" onClick={onBack} className="mr-4">
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center space-x-3">
+            <Brain className="w-8 h-8 text-purple-500" />
+            <span>AI Smart Recommendations</span>
+          </h1>
+          <p className="text-gray-600 mt-2">Personalized suggestions powered by machine learning</p>
         </div>
       </div>
 
-      {/* AI Insights Panel */}
-      <Card className="mb-8 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
+      {/* AI Insights Summary */}
+      <Card className="mb-8 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
         <CardHeader>
-          <CardTitle className="flex items-center text-purple-800">
-            <Target className="w-5 h-5 mr-2" />
-            Your AI Profile Insights
+          <CardTitle className="flex items-center space-x-2 text-purple-800">
+            <Sparkles className="w-5 h-5" />
+            <span>Your AI Profile</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">CS Student</div>
-              <div className="text-sm text-gray-600">Detected Interest</div>
+              <div className="text-2xl font-bold text-purple-600 mb-1">92%</div>
+              <div className="text-sm text-gray-600">Match Accuracy</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">3rd Year</div>
-              <div className="text-sm text-gray-600">Academic Level</div>
+              <div className="text-2xl font-bold text-blue-600 mb-1">Tech Enthusiast</div>
+              <div className="text-sm text-gray-600">Primary Interest</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">₹2000</div>
-              <div className="text-sm text-gray-600">Avg. Budget</div>
+              <div className="text-2xl font-bold text-green-600 mb-1">₹800</div>
+              <div className="text-sm text-gray-600">Avg Budget</div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Category Filter */}
-      <div className="flex flex-wrap gap-2 mb-8">
-        {categories.map((category) => (
+      {/* Filters */}
+      <div className="flex flex-wrap gap-3 mb-8">
+        {filters.map((filter) => (
           <Button
-            key={category.id}
-            variant={selectedCategory === category.id ? "default" : "outline"}
-            onClick={() => setSelectedCategory(category.id)}
-            className={selectedCategory === category.id ? 
-              "bg-gradient-to-r from-purple-500 to-pink-500" : ""}
+            key={filter.id}
+            variant={selectedFilter === filter.id ? "default" : "outline"}
+            className={`flex items-center space-x-2 ${
+              selectedFilter === filter.id 
+                ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white' 
+                : ''
+            }`}
+            onClick={() => setSelectedFilter(filter.id)}
           >
-            <Filter className="w-4 h-4 mr-2" />
-            {category.name}
+            <filter.icon className="w-4 h-4" />
+            <span>{filter.name}</span>
           </Button>
         ))}
       </div>
 
-      {/* Loading State */}
-      {loading && (
-        <div className="text-center py-12">
-          <Brain className="w-16 h-16 mx-auto text-purple-600 animate-pulse mb-4" />
-          <h3 className="text-xl font-semibold mb-2">AI is analyzing your preferences...</h3>
-          <p className="text-gray-600">This may take a few seconds</p>
-        </div>
-      )}
-
       {/* Recommendations Grid */}
-      {!loading && (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredRecommendations.map((item) => (
-            <Card key={item.id} className="group hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-2 hover:border-purple-200">
-              <div className="relative">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {filteredRecommendations.map((item) => (
+          <Card key={item.id} className="hover:shadow-lg transition-all duration-300 group border-l-4 border-l-purple-500">
+            <CardContent className="p-6">
+              <div className="flex space-x-4">
                 <img 
                   src={item.image} 
                   alt={item.title}
-                  className="w-full h-48 object-cover rounded-t-lg"
+                  className="w-24 h-24 object-cover rounded-lg"
                 />
-                
-                {/* Badges */}
-                <div className="absolute top-3 left-3 flex flex-wrap gap-2">
-                  {item.trending && (
-                    <Badge className="bg-red-500 text-white">
-                      <TrendingUp className="w-3 h-3 mr-1" />
-                      Trending
-                    </Badge>
-                  )}
-                  {item.seasonal && (
-                    <Badge className="bg-orange-500 text-white">
-                      <Clock className="w-3 h-3 mr-1" />
-                      Seasonal
-                    </Badge>
-                  )}
-                  {item.popular && (
-                    <Badge className="bg-green-500 text-white">
-                      <Star className="w-3 h-3 mr-1" />
-                      Popular
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Match Score */}
-                <div className="absolute top-3 right-3">
-                  <Badge className={getMatchColor(item.matchScore)}>
-                    {item.matchScore}
-                  </Badge>
-                </div>
-              </div>
-
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="font-bold text-lg text-gray-900 group-hover:text-purple-600 transition-colors">
-                    {item.title}
-                  </h3>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-gray-900">₹{item.price}</div>
-                    <div className="text-sm text-gray-500">per month</div>
-                  </div>
-                </div>
-
-                <p className="text-gray-600 text-sm mb-4">{item.description}</p>
-
-                {/* AI Reason */}
-                <div className="bg-purple-50 rounded-lg p-3 mb-4 border border-purple-100">
-                  <div className="flex items-center mb-2">
-                    <Zap className="w-4 h-4 text-purple-600 mr-2" />
-                    <span className="text-sm font-semibold text-purple-800">AI Insight</span>
-                    <Badge variant="outline" className="ml-auto text-xs">
+                <div className="flex-1">
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="font-semibold text-lg line-clamp-1">{item.title}</h3>
+                    <Badge className="bg-purple-100 text-purple-800 text-xs">
                       {item.confidence}% match
                     </Badge>
                   </div>
-                  <p className="text-sm text-purple-700">{item.aiReason}</p>
-                </div>
-
-                {/* Owner Info */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center">
-                    <Avatar className="w-8 h-8 mr-3">
-                      <AvatarFallback className="bg-purple-100 text-purple-600">
-                        {item.owner.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="text-sm font-medium">{item.owner}</div>
-                      <div className="text-xs text-gray-500 flex items-center">
-                        <MapPin className="w-3 h-3 mr-1" />
-                        {item.college}
-                      </div>
+                  
+                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">{item.description}</p>
+                  
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-lg font-bold text-orange-600">{item.price}</span>
+                    <div className="flex items-center space-x-1">
+                      <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                      <span className="text-sm font-medium">{item.rating}</span>
+                      <span className="text-sm text-gray-500">({item.reviews})</span>
                     </div>
                   </div>
-                  <div className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-400 mr-1" />
-                    <span className="text-sm font-medium">{item.rating}</span>
+
+                  <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
+                    <div className="flex items-center space-x-1">
+                      <MapPin className="w-4 h-4" />
+                      <span>{item.location}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Clock className="w-4 h-4" />
+                      <span>Available now</span>
+                    </div>
+                  </div>
+
+                  {/* AI Reason */}
+                  <div className="bg-purple-50 rounded-lg p-3 mb-4">
+                    <div className="flex items-start space-x-2">
+                      <Brain className="w-4 h-4 text-purple-500 mt-0.5" />
+                      <p className="text-sm text-purple-800">
+                        <span className="font-medium">AI Insight: </span>
+                        {item.reason}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* AI Insights */}
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-900 mb-2">Why this is perfect for you:</h4>
+                    <div className="space-y-1">
+                      {item.aiInsights.map((insight, index) => (
+                        <div key={index} className="flex items-center space-x-2">
+                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                          <span className="text-xs text-gray-600">{insight}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Owner and Actions */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Avatar className="w-8 h-8">
+                        <AvatarFallback className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs">
+                          {item.owner.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm font-medium">{item.owner}</span>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm">
+                        <Heart className="w-4 h-4" />
+                      </Button>
+                      <Button size="sm" className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
+                        Contact
+                      </Button>
+                    </div>
                   </div>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-                <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Contact Owner
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      {/* AI Learning Notice */}
+      <Card className="mt-8 bg-blue-50 border-blue-200">
+        <CardContent className="p-6">
+          <div className="flex items-center space-x-3">
+            <Zap className="w-6 h-6 text-blue-500" />
+            <div>
+              <h3 className="font-semibold text-blue-900">AI is learning from your preferences</h3>
+              <p className="text-sm text-blue-700">
+                The more you interact with items, the better our recommendations become. 
+                Your privacy is protected - we only use anonymous usage patterns.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

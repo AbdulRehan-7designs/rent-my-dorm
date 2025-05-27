@@ -3,142 +3,220 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { GraduationCap, Users, Zap, Shield, TrendingUp, Star, Gift, Award, Sparkles, Bot, Camera, Brain } from 'lucide-react';
+import { GraduationCap, Users, Zap, Shield, TrendingUp, Star, Gift, Award, Sparkles, Bot, Camera, Brain, ArrowRight, Play } from 'lucide-react';
 import AuthModal from './AuthModal';
 
 const LandingHero = ({ onLogin }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authType, setAuthType] = useState('login');
   const [animationClass, setAnimationClass] = useState('');
+  const [currentFeature, setCurrentFeature] = useState(0);
 
   useEffect(() => {
     setAnimationClass('animate-fade-in');
+    
+    // Rotate featured items
+    const interval = setInterval(() => {
+      setCurrentFeature(prev => (prev + 1) % 4);
+    }, 3000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const features = [
     {
       icon: Brain,
       title: "AI Smart Matching",
-      description: "Advanced ML algorithms match you with perfect items",
-      color: "from-blue-500 to-cyan-500"
+      description: "Advanced ML algorithms match you with perfect items instantly",
+      color: "from-blue-500 to-cyan-500",
+      bgPattern: "🧠"
     },
     {
       icon: Camera,
       title: "AI Object Recognition",
-      description: "Instant product verification using computer vision",
-      color: "from-orange-500 to-red-500"
+      description: "Instant product verification using computer vision technology",
+      color: "from-orange-500 to-red-500",
+      bgPattern: "📸"
     },
     {
       icon: Bot,
       title: "AI Chatbot Assistant",
-      description: "24/7 intelligent support for all your queries",
-      color: "from-green-500 to-emerald-500"
+      description: "24/7 intelligent support powered by natural language processing",
+      color: "from-green-500 to-emerald-500",
+      bgPattern: "🤖"
     },
     {
       icon: Sparkles,
       title: "Smart Recommendations",
-      description: "Personalized item suggestions based on your needs",
-      color: "from-purple-500 to-pink-500"
+      description: "Personalized suggestions based on your behavior and preferences",
+      color: "from-purple-500 to-pink-500",
+      bgPattern: "✨"
     }
   ];
 
   const stats = [
-    { number: "10,000+", label: "Active Students", icon: Users },
-    { number: "500+", label: "Partner Colleges", icon: GraduationCap },
-    { number: "50,000+", label: "Items Rented", icon: TrendingUp },
-    { number: "4.8★", label: "User Rating", icon: Star }
+    { number: "10,000+", label: "Active Students", icon: Users, trend: "+2.3K this month" },
+    { number: "500+", label: "Partner Colleges", icon: GraduationCap, trend: "+50 new" },
+    { number: "₹50L+", label: "Value Exchanged", icon: TrendingUp, trend: "+300% growth" },
+    { number: "4.9★", label: "User Rating", icon: Star, trend: "99% satisfaction" }
   ];
 
+  const FloatingElement = ({ delay, children, className = "" }) => (
+    <div 
+      className={`absolute animate-bounce ${className}`}
+      style={{ animationDelay: `${delay}s`, animationDuration: '3s' }}
+    >
+      {children}
+    </div>
+  );
+
   return (
-    <div className={`min-h-screen ${animationClass}`}>
+    <div className={`min-h-screen overflow-hidden ${animationClass}`}>
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-orange-600 via-red-500 to-pink-600">
-        <div className="absolute inset-0 bg-black/20"></div>
-        
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-20 left-10 w-16 h-16 bg-white/10 rounded-lg backdrop-blur-sm animate-bounce"></div>
-          <div className="absolute top-40 right-20 w-12 h-12 bg-yellow-400/20 rounded-full animate-pulse"></div>
-          <div className="absolute bottom-32 left-20 w-20 h-20 bg-pink-400/10 rounded-xl backdrop-blur-sm animate-bounce"></div>
-          <div className="absolute top-60 left-1/2 w-8 h-8 bg-blue-400/20 rounded-full animate-ping"></div>
+      <div className="relative bg-gradient-to-br from-orange-600 via-red-500 to-pink-600 min-h-screen flex items-center">
+        {/* Animated Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            animation: 'float 20s ease-in-out infinite'
+          }}></div>
         </div>
+        
+        {/* Floating Elements */}
+        <FloatingElement delay={0} className="top-20 left-10">
+          <div className="w-16 h-16 bg-white/10 rounded-2xl backdrop-blur-sm flex items-center justify-center text-2xl">
+            💻
+          </div>
+        </FloatingElement>
+        
+        <FloatingElement delay={1} className="top-32 right-20">
+          <div className="w-12 h-12 bg-yellow-400/20 rounded-full backdrop-blur-sm flex items-center justify-center text-xl">
+            📚
+          </div>
+        </FloatingElement>
+        
+        <FloatingElement delay={2} className="bottom-40 left-20">
+          <div className="w-20 h-20 bg-pink-400/10 rounded-3xl backdrop-blur-sm flex items-center justify-center text-3xl">
+            🎮
+          </div>
+        </FloatingElement>
+        
+        <FloatingElement delay={0.5} className="top-60 left-1/2 transform -translate-x-1/2">
+          <div className="w-8 h-8 bg-blue-400/20 rounded-full backdrop-blur-sm flex items-center justify-center">
+            ⚡
+          </div>
+        </FloatingElement>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="text-center">
-            <div className="flex justify-center mb-8">
-              <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center animate-bounce">
-                <GraduationCap className="w-12 h-12 text-white" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+          {/* Animated Logo */}
+          <div className="flex justify-center mb-8">
+            <div className="relative">
+              <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-3xl flex items-center justify-center animate-pulse shadow-2xl">
+                <GraduationCap className="w-14 h-14 text-white" />
+              </div>
+              <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center animate-spin text-lg">
+                🚀
               </div>
             </div>
-            
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 animate-scale-in">
-              Rent<span className="text-yellow-300">My</span>Dorm
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-white/90 mb-4 max-w-3xl mx-auto leading-relaxed">
-              India's First AI-Powered Campus Rental Platform
+          </div>
+          
+          {/* Main Heading with Typewriter Effect */}
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+            <span className="inline-block animate-scale-in">Rent</span>
+            <span className="text-yellow-300 inline-block animate-scale-in" style={{animationDelay: '0.2s'}}>My</span>
+            <span className="inline-block animate-scale-in" style={{animationDelay: '0.4s'}}>Dorm</span>
+          </h1>
+          
+          <div className="mb-8">
+            <p className="text-2xl md:text-3xl text-white/90 mb-4 font-semibold animate-fade-in" style={{animationDelay: '0.6s'}}>
+              India's First AI-Powered Campus Rental Platform 🇮🇳
             </p>
             
-            <p className="text-lg text-white/80 mb-12 max-w-2xl mx-auto">
+            <p className="text-xl text-white/80 mb-8 max-w-3xl mx-auto leading-relaxed animate-fade-in" style={{animationDelay: '0.8s'}}>
               From books to laptops, furniture to gadgets - rent, lend, and earn within your college community. 
-              Built for Indian students, by Indian students! 🇮🇳
+              Experience the future of sharing with cutting-edge AI!
             </p>
+          </div>
 
-            {/* Main Sign In Button */}
-            <div className="flex justify-center mb-8">
-              <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
-                <Button 
-                  size="lg" 
-                  className="relative bg-white text-orange-600 hover:bg-orange-50 px-16 py-8 text-2xl font-bold rounded-2xl shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 border-2 border-white/20"
-                  onClick={() => {
-                    setAuthType('login');
-                    setShowAuthModal(true);
-                  }}
-                >
-                  <Sparkles className="w-8 h-8 mr-4 text-orange-500" />
-                  Sign In to RentMyDorm
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12"></div>
-                </Button>
-              </div>
+          {/* Main CTA Buttons */}
+          <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6 mb-12">
+            {/* Primary Sign In Button */}
+            <div className="group relative animate-scale-in" style={{animationDelay: '1s'}}>
+              <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
+              <Button 
+                size="lg" 
+                className="relative bg-white text-orange-600 hover:bg-orange-50 px-12 py-6 text-xl font-bold rounded-3xl shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 border-2 border-white/20"
+                onClick={() => {
+                  setAuthType('login');
+                  setShowAuthModal(true);
+                }}
+              >
+                <Sparkles className="w-6 h-6 mr-3 text-orange-500 animate-pulse" />
+                <span>Sign In Now</span>
+                <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform" />
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12"></div>
+              </Button>
             </div>
 
-            {/* Semi-transparent AI Journey Button */}
-            <div className="group relative inline-block mb-8">
+            {/* Secondary AI Journey Button - Semi Transparent */}
+            <div className="group relative animate-scale-in" style={{animationDelay: '1.2s'}}>
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="relative border-2 border-white/50 text-white/80 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:text-white px-12 py-6 text-xl font-bold rounded-2xl transform hover:scale-105 transition-all duration-300 shadow-lg"
+                className="relative border-2 border-white/50 text-white/90 bg-white/10 backdrop-blur-md hover:bg-white/20 hover:text-white px-10 py-6 text-lg font-semibold rounded-3xl transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
                 onClick={() => {
                   setAuthType('signup');
                   setShowAuthModal(true);
                 }}
               >
-                <Brain className="w-6 h-6 mr-3" />
-                Start Your AI Journey
+                <Brain className="w-5 h-5 mr-3 animate-pulse" />
+                <span>Start Your AI Journey</span>
+                <Play className="w-5 h-5 ml-3 group-hover:scale-110 transition-transform" />
               </Button>
             </div>
+          </div>
 
-            <div className="flex flex-wrap justify-center gap-4">
-              <Badge className="bg-yellow-400 text-yellow-900 px-6 py-3 text-sm font-bold animate-pulse">
-                🚀 AI-Powered Matching
-              </Badge>
-              <Badge className="bg-green-400 text-green-900 px-6 py-3 text-sm font-bold animate-pulse">
-                💳 UPI & Digital Payments
-              </Badge>
-              <Badge className="bg-blue-400 text-blue-900 px-6 py-3 text-sm font-bold animate-pulse">
-                🤖 Smart Recommendations
-              </Badge>
+          {/* Feature Badges */}
+          <div className="flex flex-wrap justify-center gap-4 mb-12">
+            <Badge className="bg-yellow-400/90 backdrop-blur-sm text-yellow-900 px-6 py-3 text-sm font-bold animate-pulse hover:scale-110 transition-transform cursor-pointer">
+              🚀 AI-Powered Matching
+            </Badge>
+            <Badge className="bg-green-400/90 backdrop-blur-sm text-green-900 px-6 py-3 text-sm font-bold animate-pulse hover:scale-110 transition-transform cursor-pointer">
+              💳 UPI & Digital Payments
+            </Badge>
+            <Badge className="bg-blue-400/90 backdrop-blur-sm text-blue-900 px-6 py-3 text-sm font-bold animate-pulse hover:scale-110 transition-transform cursor-pointer">
+              🤖 Smart Recommendations
+            </Badge>
+          </div>
+
+          {/* Interactive Demo Preview */}
+          <div className="relative animate-fade-in" style={{animationDelay: '1.4s'}}>
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 mx-auto max-w-2xl border border-white/20">
+              <h3 className="text-xl font-semibold text-white mb-4">🎯 See AI in Action</h3>
+              <div className="text-left space-y-3 text-white/80">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center">✓</div>
+                  <span>Upload item photo → AI identifies instantly</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-blue-400 rounded-full flex items-center justify-center">⚡</div>
+                  <span>Smart price suggestions based on demand</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-purple-400 rounded-full flex items-center justify-center">🎯</div>
+                  <span>Personalized recommendations for you</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* AI Features Highlight Section */}
-      <div className="py-20 bg-gradient-to-r from-indigo-50 to-cyan-50">
+      {/* AI Features Showcase */}
+      <div className="py-20 bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-5xl font-bold text-gray-900 mb-6">
               🤖 Powered by Advanced AI & Machine Learning
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -148,13 +226,30 @@ const LandingHero = ({ onLogin }) => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-110 group bg-gradient-to-br from-white to-gray-50">
-                <CardContent className="p-8 text-center">
-                  <div className={`w-20 h-20 bg-gradient-to-r ${feature.color} rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:rotate-12 transition-transform duration-500 shadow-lg`}>
-                    <feature.icon className="w-10 h-10 text-white" />
+              <Card 
+                key={index} 
+                className={`border-0 shadow-xl hover:shadow-2xl transition-all duration-700 transform hover:scale-110 group bg-gradient-to-br from-white to-gray-50 ${
+                  currentFeature === index ? 'ring-4 ring-orange-300 scale-105' : ''
+                }`}
+              >
+                <CardContent className="p-8 text-center relative overflow-hidden">
+                  {/* Background Pattern */}
+                  <div className="absolute top-4 right-4 text-4xl opacity-10 group-hover:opacity-20 transition-opacity">
+                    {feature.bgPattern}
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h3>
+                  
+                  <div className={`w-20 h-20 bg-gradient-to-r ${feature.color} rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:rotate-12 transition-all duration-500 shadow-lg relative`}>
+                    <feature.icon className="w-10 h-10 text-white" />
+                    <div className="absolute inset-0 bg-white/20 rounded-3xl animate-pulse"></div>
+                  </div>
+                  
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-orange-600 transition-colors">
+                    {feature.title}
+                  </h3>
                   <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                  
+                  {/* Hover Effect */}
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-red-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
                 </CardContent>
               </Card>
             ))}
@@ -162,20 +257,53 @@ const LandingHero = ({ onLogin }) => {
         </div>
       </div>
 
-      {/* Stats Section */}
-      <div className="py-16 bg-white">
+      {/* Enhanced Stats Section */}
+      <div className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">🏆 Trusted by Thousands</h2>
+            <p className="text-gray-600">Join India's fastest-growing campus community</p>
+          </div>
+          
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center group">
-                <div className="w-20 h-20 bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <stat.icon className="w-10 h-10 text-white" />
+              <div key={index} className="text-center group hover:scale-110 transition-transform duration-300">
+                <div className="w-20 h-20 bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:rotate-6 transition-transform duration-300 shadow-lg relative overflow-hidden">
+                  <stat.icon className="w-10 h-10 text-white relative z-10" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
-                <div className="text-4xl font-bold text-gray-900 mb-2">{stat.number}</div>
-                <div className="text-gray-600 font-medium">{stat.label}</div>
+                <div className="text-4xl font-bold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
+                  {stat.number}
+                </div>
+                <div className="text-gray-600 font-medium mb-1">{stat.label}</div>
+                <div className="text-sm text-green-600 font-semibold">{stat.trend}</div>
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Final CTA Section */}
+      <div className="py-20 bg-gradient-to-r from-orange-500 to-red-500">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl font-bold text-white mb-6">
+            Ready to Experience the Future? 🚀
+          </h2>
+          <p className="text-xl text-white/90 mb-8">
+            Join thousands of students already using AI to revolutionize campus sharing
+          </p>
+          <Button 
+            size="lg"
+            className="bg-white text-orange-600 hover:bg-orange-50 px-12 py-6 text-xl font-bold rounded-3xl shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300"
+            onClick={() => {
+              setAuthType('signup');
+              setShowAuthModal(true);
+            }}
+          >
+            <Sparkles className="w-6 h-6 mr-3 text-orange-500" />
+            Get Started Today
+            <ArrowRight className="w-6 h-6 ml-3" />
+          </Button>
         </div>
       </div>
 

@@ -8,10 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { User, Store, Shield, GraduationCap, Mail, Lock, Phone, MapPin } from 'lucide-react';
+import { User, Store, Shield, GraduationCap, Mail, Lock, Phone, MapPin, Eye, EyeOff } from 'lucide-react';
 
 const AuthModal = ({ isOpen, onClose, type, onLogin }) => {
   const [activeTab, setActiveTab] = useState(type);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -81,22 +83,57 @@ const AuthModal = ({ isOpen, onClose, type, onLogin }) => {
     onClose();
   };
 
+  // Animated Avatar Component
+  const AnimatedAvatar = () => (
+    <div className="relative w-24 h-24 mx-auto mb-6">
+      <div className="w-24 h-24 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-lg transform transition-all duration-300 hover:scale-110">
+        {/* Face */}
+        <div className="relative">
+          {/* Eyes */}
+          <div className="flex space-x-3 mb-2">
+            <div className={`w-3 h-3 bg-white rounded-full transition-all duration-300 ${
+              isPasswordFocused ? 'h-1' : 'h-3'
+            }`}>
+              <div className={`w-1.5 h-1.5 bg-gray-800 rounded-full transition-all duration-300 ${
+                isPasswordFocused ? 'opacity-0' : 'opacity-100 mt-0.5 ml-0.5'
+              }`}></div>
+            </div>
+            <div className={`w-3 h-3 bg-white rounded-full transition-all duration-300 ${
+              isPasswordFocused ? 'h-1' : 'h-3'
+            }`}>
+              <div className={`w-1.5 h-1.5 bg-gray-800 rounded-full transition-all duration-300 ${
+                isPasswordFocused ? 'opacity-0' : 'opacity-100 mt-0.5 ml-0.5'
+              }`}></div>
+            </div>
+          </div>
+          {/* Mouth */}
+          <div className="w-4 h-2 border-b-2 border-white rounded-full mx-auto"></div>
+        </div>
+      </div>
+      {/* Floating particles */}
+      <div className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full animate-bounce"></div>
+      <div className="absolute -bottom-2 -left-2 w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+    </div>
+  );
+
   const RoleCard = ({ role, icon: Icon, title, description, features }) => (
     <Card 
-      className={`cursor-pointer transition-all duration-300 ${
+      className={`cursor-pointer transition-all duration-500 transform hover:scale-105 ${
         formData.role === role 
-          ? 'ring-2 ring-orange-500 bg-orange-50 transform scale-105' 
-          : 'hover:shadow-lg hover:scale-102'
+          ? 'ring-2 ring-orange-500 bg-gradient-to-br from-orange-50 to-red-50 scale-105 shadow-lg' 
+          : 'hover:shadow-lg hover:bg-gray-50'
       }`}
       onClick={() => handleInputChange('role', role)}
     >
       <CardHeader className="text-center pb-4">
-        <div className={`w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-4 ${
+        <div className={`w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-4 transition-all duration-500 ${
           formData.role === role 
-            ? 'bg-gradient-to-r from-orange-500 to-red-500' 
-            : 'bg-gray-100'
+            ? 'bg-gradient-to-r from-orange-500 to-red-500 scale-110 rotate-6' 
+            : 'bg-gray-100 hover:bg-gray-200'
         }`}>
-          <Icon className={`w-8 h-8 ${formData.role === role ? 'text-white' : 'text-gray-600'}`} />
+          <Icon className={`w-8 h-8 transition-all duration-500 ${
+            formData.role === role ? 'text-white scale-110' : 'text-gray-600'
+          }`} />
         </div>
         <CardTitle className="text-lg">{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
@@ -105,7 +142,9 @@ const AuthModal = ({ isOpen, onClose, type, onLogin }) => {
         <ul className="space-y-2 text-sm text-gray-600">
           {features.map((feature, index) => (
             <li key={index} className="flex items-center">
-              <div className="w-2 h-2 bg-orange-400 rounded-full mr-3"></div>
+              <div className={`w-2 h-2 rounded-full mr-3 transition-all duration-300 ${
+                formData.role === role ? 'bg-orange-400 animate-pulse' : 'bg-gray-300'
+              }`}></div>
               {feature}
             </li>
           ))}
@@ -123,65 +162,80 @@ const AuthModal = ({ isOpen, onClose, type, onLogin }) => {
           </DialogTitle>
         </DialogHeader>
 
+        {/* Animated Avatar */}
+        <AnimatedAvatar />
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="login" className="text-lg">Sign In</TabsTrigger>
-            <TabsTrigger value="signup" className="text-lg">Create Account</TabsTrigger>
+            <TabsTrigger value="login" className="text-lg transition-all duration-300 hover:scale-105">Sign In</TabsTrigger>
+            <TabsTrigger value="signup" className="text-lg transition-all duration-300 hover:scale-105">Create Account</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="login" className="space-y-6">
+          <TabsContent value="login" className="space-y-6 animate-fade-in">
             <div className="text-center mb-6">
-              <h3 className="text-xl font-semibold mb-2">Welcome Back!</h3>
+              <h3 className="text-xl font-semibold mb-2">Welcome Back! 🎉</h3>
               <p className="text-gray-600">Continue your campus rental journey</p>
             </div>
 
             <div className="space-y-4">
-              <div>
+              <div className="group">
                 <Label htmlFor="email">Email Address</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                  <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-400 transition-all duration-300 group-hover:text-orange-500" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="your.email@college.edu"
-                    className="pl-12"
+                    className="pl-12 transition-all duration-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
                   />
                 </div>
               </div>
 
-              <div>
+              <div className="group">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400 transition-all duration-300 group-hover:text-orange-500" />
                   <Input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    className="pl-12"
+                    className="pl-12 pr-12 transition-all duration-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
+                    onFocus={() => setIsPasswordFocused(true)}
+                    onBlur={() => setIsPasswordFocused(false)}
                   />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-2 top-2 h-8 w-8 hover:bg-orange-100"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </Button>
                 </div>
               </div>
 
               <Button 
                 onClick={handleAuth}
-                className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white py-3 text-lg font-semibold rounded-xl"
+                className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white py-3 text-lg font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
               >
-                Sign In
+                <span className="mr-2">Sign In</span>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin opacity-0 group-hover:opacity-100"></div>
               </Button>
             </div>
           </TabsContent>
 
-          <TabsContent value="signup" className="space-y-6">
+          <TabsContent value="signup" className="space-y-6 animate-fade-in">
             <div className="text-center mb-6">
-              <h3 className="text-xl font-semibold mb-2">Join RentMyDorm</h3>
+              <h3 className="text-xl font-semibold mb-2">Join RentMyDorm 🚀</h3>
               <p className="text-gray-600">Choose your role and start your journey</p>
             </div>
 
-            {/* Role Selection */}
+            {/* Role Selection with Animation */}
             <div className="grid md:grid-cols-3 gap-4 mb-6">
               <RoleCard
                 role="student"
@@ -208,59 +262,71 @@ const AuthModal = ({ isOpen, onClose, type, onLogin }) => {
               />
             </div>
 
-            {/* Personal Information */}
+            {/* Personal Information with Animation */}
             <div className="grid md:grid-cols-2 gap-4">
-              <div>
+              <div className="group">
                 <Label htmlFor="name">Full Name</Label>
                 <Input
                   id="name"
                   placeholder="Enter your full name"
+                  className="transition-all duration-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 group-hover:border-orange-300"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
                 />
               </div>
 
-              <div>
+              <div className="group">
                 <Label htmlFor="email">Email Address</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                  <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-400 transition-all duration-300 group-hover:text-orange-500" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="your.email@college.edu"
-                    className="pl-12"
+                    className="pl-12 transition-all duration-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
                   />
                 </div>
               </div>
 
-              <div>
+              <div className="group">
                 <Label htmlFor="phone">Phone Number</Label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                  <Phone className="absolute left-3 top-3 w-5 h-5 text-gray-400 transition-all duration-300 group-hover:text-orange-500" />
                   <Input
                     id="phone"
                     placeholder="+91 98765 43210"
-                    className="pl-12"
+                    className="pl-12 transition-all duration-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
                   />
                 </div>
               </div>
 
-              <div>
+              <div className="group">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400 transition-all duration-300 group-hover:text-orange-500" />
                   <Input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Create a strong password"
-                    className="pl-12"
+                    className="pl-12 pr-12 transition-all duration-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
+                    onFocus={() => setIsPasswordFocused(true)}
+                    onBlur={() => setIsPasswordFocused(false)}
                   />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-2 top-2 h-8 w-8 hover:bg-orange-100"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -270,7 +336,7 @@ const AuthModal = ({ isOpen, onClose, type, onLogin }) => {
               <div>
                 <Label htmlFor="college">College/University</Label>
                 <Select value={formData.college} onValueChange={(value) => handleInputChange('college', value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
                     <SelectValue placeholder="Select your college" />
                   </SelectTrigger>
                   <SelectContent>
@@ -286,7 +352,7 @@ const AuthModal = ({ isOpen, onClose, type, onLogin }) => {
                   <div>
                     <Label htmlFor="year">Year of Study</Label>
                     <Select value={formData.year} onValueChange={(value) => handleInputChange('year', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="transition-all duration-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
                         <SelectValue placeholder="Select year" />
                       </SelectTrigger>
                       <SelectContent>
@@ -303,7 +369,7 @@ const AuthModal = ({ isOpen, onClose, type, onLogin }) => {
                   <div>
                     <Label htmlFor="branch">Branch/Department</Label>
                     <Select value={formData.branch} onValueChange={(value) => handleInputChange('branch', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="transition-all duration-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
                         <SelectValue placeholder="Select branch" />
                       </SelectTrigger>
                       <SelectContent>
@@ -319,6 +385,7 @@ const AuthModal = ({ isOpen, onClose, type, onLogin }) => {
                     <Input
                       id="hostelnumber"
                       placeholder="e.g., H4-201"
+                      className="transition-all duration-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                       value={formData.hostelnumber}
                       onChange={(e) => handleInputChange('hostelnumber', e.target.value)}
                     />
@@ -329,9 +396,10 @@ const AuthModal = ({ isOpen, onClose, type, onLogin }) => {
 
             <Button 
               onClick={handleAuth}
-              className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white py-3 text-lg font-semibold rounded-xl"
+              className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white py-3 text-lg font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg group"
             >
-              Create Account
+              <span className="mr-2">Create Account</span>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin opacity-0 group-hover:opacity-100"></div>
             </Button>
           </TabsContent>
         </Tabs>

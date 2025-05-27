@@ -15,7 +15,11 @@ import {
   Search,
   Filter,
   Heart,
-  Eye
+  Eye,
+  Brain,
+  Camera,
+  Users,
+  Trophy
 } from 'lucide-react';
 
 const StudentDashboard = ({ user, onLogout }) => {
@@ -34,12 +38,46 @@ const StudentDashboard = ({ user, onLogout }) => {
     { id: 3, type: 'chat', item: 'Study Table', action: 'New message from Amit', time: '3 hours ago', status: 'unread' }
   ];
 
+  // Updated quickActions with proper navigation
   const quickActions = [
-    { label: 'Browse Items', icon: Search, action: () => {}, color: 'bg-blue-500' },
-    { label: 'Add Item', icon: Plus, action: () => {}, color: 'bg-green-500' },
-    { label: 'Messages', icon: MessageSquare, action: () => {}, color: 'bg-purple-500' },
-    { label: 'My Wishlist', icon: Heart, action: () => {}, color: 'bg-red-500' }
+    { 
+      label: 'Browse Items', 
+      icon: Search, 
+      action: () => window.dispatchEvent(new CustomEvent('navigate', { detail: 'browse-items' })), 
+      color: 'bg-blue-500' 
+    },
+    { 
+      label: 'AI Recognition', 
+      icon: Camera, 
+      action: () => window.dispatchEvent(new CustomEvent('navigate', { detail: 'ai-object-recognition' })), 
+      color: 'bg-purple-500' 
+    },
+    { 
+      label: 'AI Recommendations', 
+      icon: Brain, 
+      action: () => window.dispatchEvent(new CustomEvent('navigate', { detail: 'ai-recommendations' })), 
+      color: 'bg-green-500' 
+    },
+    { 
+      label: 'Messages', 
+      icon: MessageSquare, 
+      action: () => window.dispatchEvent(new CustomEvent('navigate', { detail: 'chat' })), 
+      color: 'bg-orange-500' 
+    }
   ];
+
+  // Add event listener for navigation
+  React.useEffect(() => {
+    const handleNavigate = (event) => {
+      // This will be handled by the parent component
+      if (window.setCurrentView) {
+        window.setCurrentView(event.detail);
+      }
+    };
+    
+    window.addEventListener('navigate', handleNavigate);
+    return () => window.removeEventListener('navigate', handleNavigate);
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -68,14 +106,14 @@ const StudentDashboard = ({ user, onLogout }) => {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => (
-          <Card key={index} className="hover:shadow-lg transition-shadow">
+          <Card key={index} className="hover:shadow-lg transition-shadow transform hover:scale-105 duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">{stat.label}</p>
                   <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                 </div>
-                <div className={`w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center ${stat.color}`}>
+                <div className={`w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center ${stat.color} transition-colors hover:bg-gray-200`}>
                   <stat.icon className="w-6 h-6" />
                 </div>
               </div>
@@ -91,7 +129,7 @@ const StudentDashboard = ({ user, onLogout }) => {
             <TrendingUp className="w-5 h-5 text-orange-500" />
             <span>Quick Actions</span>
           </CardTitle>
-          <CardDescription>Get started with these popular actions</CardDescription>
+          <CardDescription>Get started with these popular AI-powered features</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -99,15 +137,54 @@ const StudentDashboard = ({ user, onLogout }) => {
               <Button
                 key={index}
                 variant="outline"
-                className="h-20 flex flex-col items-center justify-center space-y-2 hover:scale-105 transition-transform"
+                className="h-24 flex flex-col items-center justify-center space-y-3 hover:scale-105 transition-all duration-300 hover:shadow-lg group"
                 onClick={action.action}
               >
-                <div className={`w-8 h-8 rounded-lg ${action.color} flex items-center justify-center`}>
-                  <action.icon className="w-4 h-4 text-white" />
+                <div className={`w-10 h-10 rounded-lg ${action.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                  <action.icon className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-sm font-medium">{action.label}</span>
+                <span className="text-sm font-medium text-center">{action.label}</span>
               </Button>
             ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* AI Features Highlight */}
+      <Card className="mb-8 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2 text-purple-800">
+            <Brain className="w-5 h-5" />
+            <span>AI-Powered Features</span>
+          </CardTitle>
+          <CardDescription className="text-purple-600">Experience the future of campus sharing</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div 
+              className="text-center p-4 bg-white/50 rounded-lg hover:bg-white/70 transition-colors cursor-pointer transform hover:scale-105 duration-300"
+              onClick={() => window.dispatchEvent(new CustomEvent('navigate', { detail: 'ai-object-recognition' }))}
+            >
+              <Camera className="w-8 h-8 text-orange-500 mx-auto mb-3" />
+              <h4 className="font-semibold mb-2">Object Recognition</h4>
+              <p className="text-sm text-gray-600">Upload photos for instant item identification</p>
+            </div>
+            <div 
+              className="text-center p-4 bg-white/50 rounded-lg hover:bg-white/70 transition-colors cursor-pointer transform hover:scale-105 duration-300"
+              onClick={() => window.dispatchEvent(new CustomEvent('navigate', { detail: 'ai-recommendations' }))}
+            >
+              <Brain className="w-8 h-8 text-purple-500 mx-auto mb-3" />
+              <h4 className="font-semibold mb-2">Smart Recommendations</h4>
+              <p className="text-sm text-gray-600">AI suggests items based on your needs</p>
+            </div>
+            <div 
+              className="text-center p-4 bg-white/50 rounded-lg hover:bg-white/70 transition-colors cursor-pointer transform hover:scale-105 duration-300"
+              onClick={() => window.dispatchEvent(new CustomEvent('navigate', { detail: 'chat' }))}
+            >
+              <MessageSquare className="w-8 h-8 text-blue-500 mx-auto mb-3" />
+              <h4 className="font-semibold mb-2">Smart Chat</h4>
+              <p className="text-sm text-gray-600">AI-enhanced communication tools</p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -124,7 +201,7 @@ const StudentDashboard = ({ user, onLogout }) => {
         <CardContent>
           <div className="space-y-4">
             {recentActivity.map((activity) => (
-              <div key={activity.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div key={activity.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                 <div className="flex items-center space-x-4">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                     activity.type === 'rental' ? 'bg-blue-100 text-blue-600' :

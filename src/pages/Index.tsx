@@ -24,6 +24,14 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Make setCurrentView available globally for dashboard navigation
+  useEffect(() => {
+    window.setCurrentView = setCurrentView;
+    return () => {
+      delete window.setCurrentView;
+    };
+  }, []);
+
   const handleLogin = (userData) => {
     setCurrentUser(userData);
     if (userData.role === 'student') {

@@ -1,290 +1,217 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { 
   ArrowLeft, 
   Send, 
   Phone, 
   Video, 
-  MoreVertical, 
-  Search,
-  MessageSquare,
-  Package,
-  Clock,
-  Check,
-  CheckCheck
+  MoreVertical,
+  Smile,
+  Paperclip,
+  Star,
+  MapPin,
+  Clock
 } from 'lucide-react';
 
 const ChatInterface = ({ onBack }) => {
-  const [selectedChat, setSelectedChat] = useState(null);
-  const [newMessage, setNewMessage] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const chats = [
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([
     {
       id: 1,
-      name: 'Rahul Kumar',
-      college: 'IIT Delhi',
-      lastMessage: 'Is the MacBook still available?',
-      time: '2 min ago',
-      unread: 2,
-      online: true,
-      item: 'MacBook Pro 13"',
+      sender: 'Rahul Kumar',
+      content: 'Hi! Is the MacBook still available for rent?',
+      time: '2:30 PM',
+      isOwn: false,
       avatar: 'R'
     },
     {
       id: 2,
-      name: 'Priya Sharma',
-      college: 'NIT Trichy',
-      lastMessage: 'Thanks for the books! They were really helpful.',
-      time: '1 hour ago',
-      unread: 0,
-      online: false,
-      item: 'Engineering Mathematics',
-      avatar: 'P'
+      sender: 'You',
+      content: 'Yes, it\'s available! When do you need it?',
+      time: '2:32 PM',
+      isOwn: true,
+      avatar: 'Y'
     },
     {
       id: 3,
-      name: 'Amit Patel',
-      college: 'BITS Pilani',
-      lastMessage: 'Can we meet tomorrow to see the table?',
-      time: '3 hours ago',
-      unread: 1,
-      online: true,
-      item: 'Study Table',
-      avatar: 'A'
-    }
-  ];
-
-  const messages = selectedChat ? [
-    {
-      id: 1,
-      sender: 'other',
-      content: 'Hi! I saw your listing for the MacBook Pro. Is it still available?',
-      time: '10:30 AM',
-      status: 'read'
-    },
-    {
-      id: 2,
-      sender: 'me',
-      content: 'Yes, it\'s still available! It\'s in excellent condition with the original charger.',
-      time: '10:32 AM',
-      status: 'read'
-    },
-    {
-      id: 3,
-      sender: 'other',
-      content: 'Great! What\'s your best price for a week\'s rental?',
-      time: '10:35 AM',
-      status: 'read'
+      sender: 'Rahul Kumar',
+      content: 'I need it for a project from Monday to Friday. What\'s the total cost?',
+      time: '2:35 PM',
+      isOwn: false,
+      avatar: 'R'
     },
     {
       id: 4,
-      sender: 'me',
-      content: 'I can do ₹1200 for a week. It includes the charger and a laptop sleeve.',
-      time: '10:37 AM',
-      status: 'delivered'
+      sender: 'You',
+      content: 'That would be ₹4000 for 5 days. I can also include the charger and a laptop bag.',
+      time: '2:37 PM',
+      isOwn: true,
+      avatar: 'Y'
     },
     {
       id: 5,
-      sender: 'other',
-      content: 'That sounds perfect! When can we meet?',
-      time: '10:40 AM',
-      status: 'sent'
+      sender: 'Rahul Kumar',
+      content: 'Perfect! That sounds great. Can we meet at the campus library tomorrow?',
+      time: '2:40 PM',
+      isOwn: false,
+      avatar: 'R'
     }
-  ] : [];
+  ]);
+
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      setNewMessage('');
+    if (message.trim()) {
+      const newMessage = {
+        id: messages.length + 1,
+        sender: 'You',
+        content: message,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        isOwn: true,
+        avatar: 'Y'
+      };
+      setMessages([...messages, newMessage]);
+      setMessage('');
     }
   };
 
-  const filteredChats = chats.filter(chat =>
-    chat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    chat.item.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSendMessage();
+    }
+  };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-screen flex flex-col">
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center space-x-4 mb-4">
-          <Button variant="outline" onClick={onBack}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+      <div className="flex items-center justify-between mb-6 pb-4 border-b">
+        <div className="flex items-center space-x-4">
+          <Button variant="ghost" onClick={onBack}>
+            <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900">Messages</h1>
+          <Avatar className="w-12 h-12">
+            <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+              R
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <h2 className="text-xl font-semibold">Rahul Kumar</h2>
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-sm text-gray-600">Online</span>
+              <Badge variant="secondary" className="text-xs">
+                Verified Student
+              </Badge>
+            </div>
+          </div>
         </div>
-        <p className="text-gray-600">Connect with other students and negotiate your rentals</p>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" size="icon">
+            <Phone className="w-4 h-4" />
+          </Button>
+          <Button variant="outline" size="icon">
+            <Video className="w-4 h-4" />
+          </Button>
+          <Button variant="outline" size="icon">
+            <MoreVertical className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6 h-[600px]">
-        {/* Chat List */}
-        <Card className="lg:col-span-1">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center space-x-2">
-              <MessageSquare className="w-5 h-5 text-orange-500" />
-              <span>Conversations</span>
-            </CardTitle>
-            <div className="relative">
-              <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-              <Input
-                placeholder="Search conversations..."
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="max-h-[400px] overflow-y-auto">
-              {filteredChats.map((chat) => (
-                <div
-                  key={chat.id}
-                  onClick={() => setSelectedChat(chat)}
-                  className={`p-4 border-b hover:bg-gray-50 cursor-pointer transition-colors ${
-                    selectedChat?.id === chat.id ? 'bg-orange-50 border-orange-200' : ''
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="relative">
-                      <Avatar className="w-10 h-10">
-                        <AvatarFallback className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
-                          {chat.avatar}
-                        </AvatarFallback>
-                      </Avatar>
-                      {chat.online && (
-                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium text-gray-900 truncate">{chat.name}</p>
-                        <p className="text-xs text-gray-500">{chat.time}</p>
-                      </div>
-                      <p className="text-sm text-gray-600 truncate">{chat.lastMessage}</p>
-                      <div className="flex items-center justify-between mt-1">
-                        <Badge variant="secondary" className="text-xs">
-                          {chat.item}
-                        </Badge>
-                        {chat.unread > 0 && (
-                          <Badge className="bg-orange-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                            {chat.unread}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+      {/* Item Context Card */}
+      <Card className="mb-6">
+        <CardContent className="p-4">
+          <div className="flex items-center space-x-4">
+            <img 
+              src="/placeholder.svg" 
+              alt="MacBook Pro"
+              className="w-20 h-20 object-cover rounded-lg"
+            />
+            <div className="flex-1">
+              <h3 className="font-semibold text-lg">MacBook Pro 13" 2023</h3>
+              <p className="text-gray-600 text-sm">Perfect for coding and design work</p>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-lg font-bold text-orange-600">₹800/day</span>
+                <div className="flex items-center space-x-1">
+                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                  <span className="text-sm">4.8 (24 reviews)</span>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Chat Area */}
-        <Card className="lg:col-span-2">
-          {selectedChat ? (
-            <>
-              {/* Chat Header */}
-              <CardHeader className="border-b">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <Avatar className="w-10 h-10">
-                      <AvatarFallback className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
-                        {selectedChat.avatar}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{selectedChat.name}</h3>
-                      <p className="text-sm text-gray-600">{selectedChat.college}</p>
-                      <Badge variant="outline" className="text-xs mt-1">
-                        <Package className="w-3 h-3 mr-1" />
-                        {selectedChat.item}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Button variant="outline" size="sm">
-                      <Phone className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Video className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <MoreVertical className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-
-              {/* Messages */}
-              <CardContent className="p-0">
-                <div className="h-80 overflow-y-auto p-4 space-y-4">
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex ${message.sender === 'me' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div
-                        className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                          message.sender === 'me'
-                            ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
-                            : 'bg-gray-100 text-gray-900'
-                        }`}
-                      >
-                        <p className="text-sm">{message.content}</p>
-                        <div className={`flex items-center justify-between mt-1 ${
-                          message.sender === 'me' ? 'text-white/80' : 'text-gray-500'
-                        }`}>
-                          <span className="text-xs">{message.time}</span>
-                          {message.sender === 'me' && (
-                            <div className="ml-2">
-                              {message.status === 'sent' && <Check className="w-3 h-3" />}
-                              {message.status === 'delivered' && <CheckCheck className="w-3 h-3" />}
-                              {message.status === 'read' && <CheckCheck className="w-3 h-3 text-blue-300" />}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Message Input */}
-                <div className="border-t p-4">
-                  <div className="flex items-center space-x-2">
-                    <Input
-                      placeholder="Type your message..."
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                      className="flex-1"
-                    />
-                    <Button 
-                      onClick={handleSendMessage}
-                      className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
-                    >
-                      <Send className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </>
-          ) : (
-            <CardContent className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Select a conversation</h3>
-                <p className="text-gray-600">Choose a chat from the list to start messaging</p>
               </div>
-            </CardContent>
-          )}
-        </Card>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto mb-6 space-y-4">
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            className={`flex ${msg.isOwn ? 'justify-end' : 'justify-start'}`}
+          >
+            <div className={`flex items-end space-x-2 max-w-xs lg:max-w-md ${msg.isOwn ? 'flex-row-reverse space-x-reverse' : ''}`}>
+              <Avatar className="w-8 h-8">
+                <AvatarFallback className={`text-white text-sm ${
+                  msg.isOwn 
+                    ? 'bg-gradient-to-r from-orange-500 to-red-500' 
+                    : 'bg-gradient-to-r from-blue-500 to-purple-500'
+                }`}>
+                  {msg.avatar}
+                </AvatarFallback>
+              </Avatar>
+              <div className={`rounded-lg px-4 py-2 ${
+                msg.isOwn 
+                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white' 
+                  : 'bg-gray-100 text-gray-900'
+              }`}>
+                <p className="text-sm">{msg.content}</p>
+                <p className={`text-xs mt-1 ${
+                  msg.isOwn ? 'text-orange-100' : 'text-gray-500'
+                }`}>
+                  {msg.time}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Message Input */}
+      <div className="flex items-center space-x-2 bg-gray-50 rounded-lg p-2">
+        <Button variant="ghost" size="icon">
+          <Paperclip className="w-4 h-4" />
+        </Button>
+        <Input
+          placeholder="Type a message..."
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyPress={handleKeyPress}
+          className="flex-1 border-none bg-transparent focus-visible:ring-0"
+        />
+        <Button variant="ghost" size="icon">
+          <Smile className="w-4 h-4" />
+        </Button>
+        <Button 
+          onClick={handleSendMessage}
+          className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+          size="icon"
+        >
+          <Send className="w-4 h-4" />
+        </Button>
       </div>
     </div>
   );
