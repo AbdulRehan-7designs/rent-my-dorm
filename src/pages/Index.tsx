@@ -1,12 +1,77 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
+import LandingHero from '@/components/LandingHero';
+import AuthModal from '@/components/AuthModal';
+import StudentDashboard from '@/components/StudentDashboard';
+import VendorDashboard from '@/components/VendorDashboard';
+import AdminDashboard from '@/components/AdminDashboard';
+import ItemListing from '@/components/ItemListing';
+import ChatInterface from '@/components/ChatInterface';
+import Navigation from '@/components/Navigation';
 
 const Index = () => {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [currentView, setCurrentView] = useState('landing');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const handleLogin = (userData) => {
+    setCurrentUser(userData);
+    if (userData.role === 'student') {
+      setCurrentView('student-dashboard');
+    } else if (userData.role === 'vendor') {
+      setCurrentView('vendor-dashboard');
+    } else if (userData.role === 'admin') {
+      setCurrentView('admin-dashboard');
+    }
+    toast({
+      title: "Welcome to RentMyDorm! 🎉",
+      description: `Successfully logged in as ${userData.role}`,
+    });
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setCurrentView('landing');
+    toast({
+      title: "Logged out successfully",
+      description: "See you soon! 👋",
+    });
+  };
+
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case 'landing':
+        return <LandingHero onLogin={handleLogin} />;
+      case 'student-dashboard':
+        return <StudentDashboard user={currentUser} onLogout={handleLogout} />;
+      case 'vendor-dashboard':
+        return <VendorDashboard user={currentUser} onLogout={handleLogout} />;
+      case 'admin-dashboard':
+        return <AdminDashboard user={currentUser} onLogout={handleLogout} />;
+      case 'browse-items':
+        return <ItemListing onBack={() => setCurrentView('student-dashboard')} />;
+      case 'chat':
+        return <ChatInterface onBack={() => setCurrentView('student-dashboard')} />;
+      default:
+        return <LandingHero onLogin={handleLogin} />;
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
+      {currentUser && (
+        <Navigation 
+          user={currentUser} 
+          onLogout={handleLogout}
+          onNavigate={setCurrentView}
+          currentView={currentView}
+        />
+      )}
+      {renderCurrentView()}
     </div>
   );
 };
