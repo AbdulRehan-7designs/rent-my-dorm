@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -10,6 +9,8 @@ import AdminDashboard from '@/components/AdminDashboard';
 import ItemListing from '@/components/ItemListing';
 import ChatInterface from '@/components/ChatInterface';
 import Navigation from '@/components/Navigation';
+import AIObjectRecognition from '@/components/AIObjectRecognition';
+import AIRecommendations from '@/components/AIRecommendations';
 
 const Index = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -56,6 +57,10 @@ const Index = () => {
         return <ItemListing onBack={() => setCurrentView('student-dashboard')} />;
       case 'chat':
         return <ChatInterface onBack={() => setCurrentView('student-dashboard')} />;
+      case 'ai-object-recognition':
+        return <AIObjectRecognition onBack={() => setCurrentView('student-dashboard')} />;
+      case 'ai-recommendations':
+        return <AIRecommendations onBack={() => setCurrentView('student-dashboard')} user={currentUser} />;
       default:
         return <LandingHero onLogin={handleLogin} />;
     }
