@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -16,6 +15,14 @@ import ProfilePage from '@/components/ProfilePage';
 import SettingsPage from '@/components/SettingsPage';
 import MyRentalsPage from '@/components/MyRentalsPage';
 import LeaderboardPage from '@/components/LeaderboardPage';
+import ContactPage from '@/components/ContactPage';
+import LikedItemsPage from '@/components/LikedItemsPage';
+import AddItemPage from '@/components/AddItemPage';
+import ActiveRentalsPage from '@/components/ActiveRentalsPage';
+import VendorAnalyticsPage from '@/components/VendorAnalyticsPage';
+import VendorOrdersPage from '@/components/VendorOrdersPage';
+import AdminApprovalsPage from '@/components/AdminApprovalsPage';
+import AdminAnnouncementsPage from '@/components/AdminAnnouncementsPage';
 
 // Extend the Window interface to include setCurrentView
 declare global {
@@ -72,9 +79,9 @@ const Index = () => {
       case 'student-dashboard':
         return <StudentDashboard user={currentUser} onLogout={handleLogout} onNavigate={setCurrentView} />;
       case 'vendor-dashboard':
-        return <VendorDashboard user={currentUser} onLogout={handleLogout} />;
+        return <VendorDashboard user={currentUser} onLogout={handleLogout} onNavigate={setCurrentView} />;
       case 'admin-dashboard':
-        return <AdminDashboard user={currentUser} onLogout={handleLogout} />;
+        return <AdminDashboard user={currentUser} onLogout={handleLogout} onNavigate={setCurrentView} />;
       case 'browse-items':
         return <ItemListing onBack={() => setCurrentView('student-dashboard')} />;
       case 'chat':
@@ -91,6 +98,29 @@ const Index = () => {
         return <MyRentalsPage onBack={() => setCurrentView('student-dashboard')} />;
       case 'leaderboard':
         return <LeaderboardPage user={currentUser} onBack={() => setCurrentView('student-dashboard')} />;
+      
+      // Contact and messaging pages
+      case 'contact':
+        return <ContactPage onBack={() => setCurrentView('browse-items')} itemOwner={currentUser} item={null} />;
+      case 'liked-items':
+        return <LikedItemsPage onBack={() => setCurrentView('student-dashboard')} />;
+      case 'add-item':
+        return <AddItemPage onBack={() => setCurrentView('student-dashboard')} />;
+      case 'active-rentals':
+        return <ActiveRentalsPage onBack={() => setCurrentView('student-dashboard')} />;
+      
+      // Vendor pages
+      case 'vendor-analytics':
+        return <VendorAnalyticsPage onBack={() => setCurrentView('vendor-dashboard')} />;
+      case 'vendor-orders':
+        return <VendorOrdersPage onBack={() => setCurrentView('vendor-dashboard')} />;
+      
+      // Admin pages
+      case 'admin-approvals':
+        return <AdminApprovalsPage onBack={() => setCurrentView('admin-dashboard')} />;
+      case 'admin-announcements':
+        return <AdminAnnouncementsPage onBack={() => setCurrentView('admin-dashboard')} />;
+      
       default:
         return <LandingHero onLogin={handleLogin} />;
     }

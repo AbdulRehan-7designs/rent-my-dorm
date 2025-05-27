@@ -63,6 +63,30 @@ const StudentDashboard = ({ user, onLogout, onNavigate }) => {
       icon: MessageSquare, 
       action: () => onNavigate('chat'), 
       color: 'bg-orange-500' 
+    },
+    { 
+      label: 'Add Item', 
+      icon: Plus, 
+      action: () => onNavigate('add-item'), 
+      color: 'bg-red-500' 
+    },
+    { 
+      label: 'My Favorites', 
+      icon: Heart, 
+      action: () => onNavigate('liked-items'), 
+      color: 'bg-pink-500' 
+    },
+    { 
+      label: 'Active Rentals', 
+      icon: Package, 
+      action: () => onNavigate('active-rentals'), 
+      color: 'bg-indigo-500' 
+    },
+    { 
+      label: 'Leaderboard', 
+      icon: Trophy, 
+      action: () => onNavigate('leaderboard'), 
+      color: 'bg-yellow-500' 
     }
   ];
 

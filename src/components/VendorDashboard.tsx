@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,10 +13,11 @@ import {
   Plus,
   BarChart3,
   ShoppingCart,
-  Award
+  Award,
+  MessageSquare
 } from 'lucide-react';
 
-const VendorDashboard = ({ user, onLogout }) => {
+const VendorDashboard = ({ user, onLogout, onNavigate }) => {
   const [activeSection, setActiveSection] = useState('overview');
 
   const vendorStats = [
@@ -34,10 +34,12 @@ const VendorDashboard = ({ user, onLogout }) => {
   ];
 
   const quickActions = [
-    { label: 'Add New Item', icon: Plus, action: () => {}, color: 'bg-green-500' },
-    { label: 'View Analytics', icon: BarChart3, action: () => {}, color: 'bg-blue-500' },
-    { label: 'Manage Orders', icon: ShoppingCart, action: () => {}, color: 'bg-purple-500' },
-    { label: 'Customer Reviews', icon: Star, action: () => {}, color: 'bg-yellow-500' }
+    { label: 'Add New Item', icon: Plus, action: () => onNavigate('add-item'), color: 'bg-green-500' },
+    { label: 'View Analytics', icon: BarChart3, action: () => onNavigate('vendor-analytics'), color: 'bg-blue-500' },
+    { label: 'Manage Orders', icon: ShoppingCart, action: () => onNavigate('vendor-orders'), color: 'bg-purple-500' },
+    { label: 'Customer Reviews', icon: Star, action: () => onNavigate('active-rentals'), color: 'bg-yellow-500' },
+    { label: 'My Listings', icon: Package, action: () => onNavigate('browse-items'), color: 'bg-indigo-500' },
+    { label: 'Messages', icon: MessageSquare, action: () => onNavigate('chat'), color: 'bg-orange-500' }
   ];
 
   return (

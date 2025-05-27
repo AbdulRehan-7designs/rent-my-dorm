@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +18,7 @@ import {
   Bell
 } from 'lucide-react';
 
-const AdminDashboard = ({ user, onLogout }) => {
+const AdminDashboard = ({ user, onLogout, onNavigate }) => {
   const [activeSection, setActiveSection] = useState('overview');
 
   const adminStats = [
@@ -36,10 +35,12 @@ const AdminDashboard = ({ user, onLogout }) => {
   ];
 
   const quickActions = [
-    { label: 'Approve Listings', icon: CheckCircle, action: () => {}, color: 'bg-green-500', count: 15 },
-    { label: 'Review Reports', icon: AlertTriangle, action: () => {}, color: 'bg-red-500', count: 3 },
-    { label: 'College Analytics', icon: BarChart3, action: () => {}, color: 'bg-blue-500', count: null },
-    { label: 'System Settings', icon: Settings, action: () => {}, color: 'bg-gray-500', count: null }
+    { label: 'Approve Listings', icon: CheckCircle, action: () => onNavigate('admin-approvals'), color: 'bg-green-500', count: 15 },
+    { label: 'Review Reports', icon: AlertTriangle, action: () => onNavigate('admin-approvals'), color: 'bg-red-500', count: 3 },
+    { label: 'College Analytics', icon: BarChart3, action: () => onNavigate('vendor-analytics'), color: 'bg-blue-500', count: null },
+    { label: 'System Settings', icon: Settings, action: () => onNavigate('settings'), color: 'bg-gray-500', count: null },
+    { label: 'Announcements', icon: Bell, action: () => onNavigate('admin-announcements'), color: 'bg-purple-500', count: null },
+    { label: 'Manage Colleges', icon: GraduationCap, action: () => onNavigate('browse-items'), color: 'bg-indigo-500', count: null }
   ];
 
   const recentActivity = [
