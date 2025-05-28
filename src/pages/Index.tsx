@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -23,11 +24,13 @@ import VendorAnalyticsPage from '@/components/VendorAnalyticsPage';
 import VendorOrdersPage from '@/components/VendorOrdersPage';
 import AdminApprovalsPage from '@/components/AdminApprovalsPage';
 import AdminAnnouncementsPage from '@/components/AdminAnnouncementsPage';
+import RentalConfirmation from '@/components/RentalConfirmation';
+import TransactionCompletion from '@/components/TransactionCompletion';
 
 // Extend the Window interface to include setCurrentView
 declare global {
   interface Window {
-    setCurrentView: (view: string) => void;
+    setCurrentView?: (view: string) => void;
   }
 }
 
@@ -37,6 +40,7 @@ const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [demoTransactionId, setDemoTransactionId] = useState<string | null>(null);
 
   // Make setCurrentView available globally for dashboard navigation
   useEffect(() => {
@@ -66,10 +70,39 @@ const Index = () => {
   const handleLogout = () => {
     setCurrentUser(null);
     setCurrentView('landing');
+    setDemoTransactionId(null);
     toast({
       title: "Logged out successfully",
       description: "See you soon! 👋",
     });
+  };
+
+  // Demo data for rental confirmation
+  const demoRentalItem = {
+    id: 'demo-item-1',
+    title: 'MacBook Pro 13-inch M2',
+    price: 1500,
+    priceType: 'day',
+    vendor: {
+      id: 'vendor-1',
+      name: 'TechRentals Co.',
+      rating: 4.8
+    },
+    duration: 3,
+    location: 'IIT Delhi Campus',
+    image: '/placeholder.svg'
+  };
+
+  const demoRenterDetails = {
+    id: 'user-1',
+    name: 'Rahul Kumar',
+    email: 'rahul@example.com',
+    phone: '+91 98765 43210',
+    rentalHistory: {
+      completedRentals: 12, // This makes them a loyalty user
+      totalTransactions: 15,
+      trustScore: 850
+    }
   };
 
   const renderCurrentView = () => {
@@ -120,6 +153,37 @@ const Index = () => {
         return <AdminApprovalsPage onBack={() => setCurrentView('admin-dashboard')} />;
       case 'admin-announcements':
         return <AdminAnnouncementsPage onBack={() => setCurrentView('admin-dashboard')} />;
+      
+      // Transaction fee system demo pages
+      case 'demo-rental-confirmation':
+        return (
+          <RentalConfirmation
+            item={demoRentalItem}
+            renter={demoRenterDetails}
+            onConfirm={(transactionId) => {
+              setDemoTransactionId(transactionId);
+              setCurrentView('demo-transaction-completion');
+            }}
+            onCancel={() => setCurrentView('student-dashboard')}
+          />
+        );
+      case 'demo-transaction-completion':
+        return demoTransactionId ? (
+          <TransactionCompletion
+            transactionId={demoTransactionId}
+            onComplete={() => {
+              setCurrentView('student-dashboard');
+              setDemoTransactionId(null);
+            }}
+          />
+        ) : (
+          <div className="p-8 text-center">
+            <p>No transaction found</p>
+            <Button onClick={() => setCurrentView('student-dashboard')}>
+              Back to Dashboard
+            </Button>
+          </div>
+        );
       
       default:
         return <LandingHero onLogin={handleLogin} />;
