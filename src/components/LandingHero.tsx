@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -114,7 +113,7 @@ const LandingHero = ({ onLogin }) => {
               <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-3xl flex items-center justify-center animate-pulse shadow-2xl">
                 <GraduationCap className="w-14 h-14 text-white" />
               </div>
-              <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center animate-spin text-lg">
+              <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center text-lg">
                 🚀
               </div>
             </div>
@@ -158,7 +157,7 @@ const LandingHero = ({ onLogin }) => {
               </Button>
             </div>
 
-            {/* Secondary AI Journey Button - Semi Transparent */}
+            {/* Secondary Get Started Button - Updated text */}
             <div className="group relative animate-scale-in" style={{animationDelay: '1.2s'}}>
               <Button 
                 size="lg" 
@@ -170,7 +169,7 @@ const LandingHero = ({ onLogin }) => {
                 }}
               >
                 <Brain className="w-5 h-5 mr-3 animate-pulse" />
-                <span>Start Your AI Journey</span>
+                <span>Get Started</span>
                 <Play className="w-5 h-5 ml-3 group-hover:scale-110 transition-transform" />
               </Button>
             </div>
