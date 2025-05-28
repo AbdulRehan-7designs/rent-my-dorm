@@ -45,11 +45,17 @@ const AddItemPage = ({ onBack }) => {
   };
 
   const handleImageUpload = (event) => {
-    const files = Array.from(event.target.files);
-    files.forEach(file => {
+    const files = Array.from(event.target.files || []);
+    files.forEach((file: File) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setImages(prev => [...prev, { id: Date.now() + Math.random(), src: e.target.result, file }]);
+        if (e.target?.result) {
+          setImages(prev => [...prev, { 
+            id: Date.now() + Math.random(), 
+            src: e.target.result as string, 
+            file 
+          }]);
+        }
       };
       reader.readAsDataURL(file);
     });
@@ -255,7 +261,7 @@ const AddItemPage = ({ onBack }) => {
                       className="hidden"
                       id="image-upload"
                     />
-                    <Button variant="outline" onClick={() => document.getElementById('image-upload').click()}>
+                    <Button variant="outline" onClick={() => document.getElementById('image-upload')?.click()}>
                       Choose Files
                     </Button>
                   </div>
