@@ -145,10 +145,7 @@ const LandingHero = ({ onLogin }) => {
               <Button 
                 size="lg" 
                 className="relative bg-white text-orange-600 hover:bg-orange-50 px-12 py-6 text-xl font-bold rounded-3xl shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 border-2 border-white/20"
-                onClick={() => {
-                  setAuthType('login');
-                  setShowAuthModal(true);
-                }}
+                onClick={() => window.location.href = '/login'}
               >
                 <Sparkles className="w-6 h-6 mr-3 text-orange-500 animate-pulse" />
                 <span>Sign In Now</span>
@@ -163,10 +160,7 @@ const LandingHero = ({ onLogin }) => {
                 size="lg" 
                 variant="outline" 
                 className="relative border-2 border-white/50 text-white/90 bg-white/10 backdrop-blur-md hover:bg-white/20 hover:text-white px-10 py-6 text-lg font-semibold rounded-3xl transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-                onClick={() => {
-                  setAuthType('signup');
-                  setShowAuthModal(true);
-                }}
+                onClick={() => window.location.href = '/signup'}
               >
                 <Brain className="w-5 h-5 mr-3 animate-pulse" />
                 <span>Get Started</span>
@@ -294,10 +288,7 @@ const LandingHero = ({ onLogin }) => {
           <Button 
             size="lg"
             className="bg-white text-orange-600 hover:bg-orange-50 px-12 py-6 text-xl font-bold rounded-3xl shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300"
-            onClick={() => {
-              setAuthType('signup');
-              setShowAuthModal(true);
-            }}
+            onClick={() => window.location.href = '/signup'}
           >
             <Sparkles className="w-6 h-6 mr-3 text-orange-500" />
             Get Started Today

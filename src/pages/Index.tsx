@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -34,9 +33,12 @@ declare global {
   }
 }
 
-const Index = () => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [currentView, setCurrentView] = useState('landing');
+const Index = ({ currentUser: propCurrentUser, onLogin: propOnLogin }) => {
+  const [currentUser, setCurrentUser] = useState(propCurrentUser);
+  const [currentView, setCurrentView] = useState(propCurrentUser ? 
+    (propCurrentUser.role === 'student' ? 'student-dashboard' : 
+     propCurrentUser.role === 'vendor' ? 'vendor-dashboard' : 'admin-dashboard') 
+    : 'landing');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -52,8 +54,25 @@ const Index = () => {
     };
   }, []);
 
+  // Update user when prop changes
+  useEffect(() => {
+    if (propCurrentUser) {
+      setCurrentUser(propCurrentUser);
+      if (propCurrentUser.role === 'student') {
+        setCurrentView('student-dashboard');
+      } else if (propCurrentUser.role === 'vendor') {
+        setCurrentView('vendor-dashboard');
+      } else if (propCurrentUser.role === 'admin') {
+        setCurrentView('admin-dashboard');
+      }
+    }
+  }, [propCurrentUser]);
+
   const handleLogin = (userData) => {
     setCurrentUser(userData);
+    if (propOnLogin) {
+      propOnLogin(userData);
+    }
     if (userData.role === 'student') {
       setCurrentView('student-dashboard');
     } else if (userData.role === 'vendor') {
