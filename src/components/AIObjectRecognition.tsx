@@ -22,7 +22,11 @@ const AIObjectRecognition = ({ onBack }) => {
   const [scanProgress, setScanProgress] = useState(0);
   const [scanResult, setScanResult] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [isCameraActive, setIsCameraActive] = useState(false);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -31,41 +35,166 @@ const AIObjectRecognition = ({ onBack }) => {
       reader.onload = (e) => {
         setSelectedImage(e.target.result);
         setScanResult(null);
+        setError(null);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const simulateAIScan = () => {
+  const startCamera = async () => {
+    try {
+      setError(null);
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          facingMode: 'environment' // Use back camera on mobile
+        } 
+      });
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        setIsCameraActive(true);
+      }
+    } catch (err) {
+      console.error('Error accessing camera:', err);
+      setError('Camera access denied. Please allow camera permissions and try again.');
+    }
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      ctx.drawImage(video, 0, 0);
+      
+      canvas.toBlob((blob) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setSelectedImage(e.target.result);
+          stopCamera();
+          setScanResult(null);
+          setError(null);
+        };
+        reader.readAsDataURL(blob);
+      }, 'image/jpeg', 0.8);
+    }
+  };
+
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const tracks = videoRef.current.srcObject.getTracks();
+      tracks.forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+      setIsCameraActive(false);
+    }
+  };
+
+  const analyzeImageWithAI = async (imageData) => {
+    // Simulate more realistic AI analysis
+    const analysisSteps = [
+      'Loading computer vision model...',
+      'Detecting object boundaries...',
+      'Extracting visual features...',
+      'Analyzing object characteristics...',
+      'Comparing with knowledge base...',
+      'Determining condition and value...',
+      'Generating market insights...'
+    ];
+
+    for (let i = 0; i < analysisSteps.length; i++) {
+      await new Promise(resolve => setTimeout(resolve, 400));
+      setScanProgress((i + 1) * (100 / analysisSteps.length));
+    }
+
+    // Create a more realistic analysis based on common items
+    const commonItems = [
+      {
+        keywords: ['laptop', 'macbook', 'computer'],
+        result: {
+          item: 'MacBook Pro 13-inch',
+          confidence: 89.2,
+          category: 'Electronics - Laptop',
+          estimatedValue: '₹75,000 - ₹95,000',
+          rentalSuggestion: '₹700 - ₹1,000/day',
+          features: [
+            'Apple Silicon M2 chip detected',
+            'Retina display technology',
+            'Good condition (87%)',
+            'All ports functional',
+            'Minor wear on corners'
+          ],
+          similarListings: 8,
+          demandLevel: 'High'
+        }
+      },
+      {
+        keywords: ['book', 'textbook', 'novel'],
+        result: {
+          item: 'Academic Textbook',
+          confidence: 94.5,
+          category: 'Books & Education',
+          estimatedValue: '₹500 - ₹1,200',
+          rentalSuggestion: '₹50 - ₹100/day',
+          features: [
+            'Good condition pages',
+            'No major damage detected',
+            'Readable text quality',
+            'Standard paperback size'
+          ],
+          similarListings: 15,
+          demandLevel: 'Medium'
+        }
+      },
+      {
+        keywords: ['phone', 'mobile', 'smartphone'],
+        result: {
+          item: 'Smartphone Device',
+          confidence: 91.8,
+          category: 'Electronics - Mobile',
+          estimatedValue: '₹15,000 - ₹35,000',
+          rentalSuggestion: '₹200 - ₹400/day',
+          features: [
+            'Screen in good condition',
+            'No visible cracks',
+            'Functional buttons detected',
+            'Standard smartphone form'
+          ],
+          similarListings: 12,
+          demandLevel: 'High'
+        }
+      }
+    ];
+
+    // Return a random item for demo purposes
+    const randomItem = commonItems[Math.floor(Math.random() * commonItems.length)];
+    return randomItem.result;
+  };
+
+  const simulateAIScan = async () => {
+    if (!selectedImage) {
+      setError('Please select or capture an image first');
+      return;
+    }
+
     setIsScanning(true);
     setScanProgress(0);
+    setError(null);
     
-    const interval = setInterval(() => {
-      setScanProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsScanning(false);
-          setScanResult({
-            item: 'MacBook Pro 13" 2023',
-            confidence: 94.5,
-            category: 'Electronics - Laptop',
-            estimatedValue: '₹80,000 - ₹1,20,000',
-            rentalSuggestion: '₹800 - ₹1,200/day',
-            features: [
-              'Apple M2 Chip detected',
-              'Retina Display identified',
-              'Excellent condition (95%)',
-              'All ports functional',
-              'No visible damage'
-            ],
-            similarListings: 12,
-            demandLevel: 'High'
-          });
-          return 100;
-        }
-        return prev + 2;
-      });
-    }, 50);
+    try {
+      const result = await analyzeImageWithAI(selectedImage);
+      setScanResult(result);
+    } catch (err) {
+      setError('Analysis failed. Please try again with a clearer image.');
+      console.error('AI Analysis error:', err);
+    } finally {
+      setIsScanning(false);
+    }
   };
 
   return (
@@ -83,6 +212,18 @@ const AIObjectRecognition = ({ onBack }) => {
           <p className="text-gray-600 mt-2">Upload or capture an image to identify and analyze items instantly</p>
         </div>
       </div>
+
+      {/* Error Display */}
+      {error && (
+        <Card className="mb-6 border-red-200 bg-red-50">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2 text-red-800">
+              <AlertCircle className="w-5 h-5" />
+              <span>{error}</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Upload Section */}
       <Card className="mb-8">
@@ -110,6 +251,7 @@ const AIObjectRecognition = ({ onBack }) => {
             <Button
               variant="outline"
               className="h-32 flex flex-col items-center justify-center space-y-3 border-dashed border-2 hover:border-green-500 transition-colors"
+              onClick={startCamera}
             >
               <Camera className="w-8 h-8 text-green-500" />
               <span className="font-medium">Take Photo</span>
@@ -127,8 +269,34 @@ const AIObjectRecognition = ({ onBack }) => {
         </CardContent>
       </Card>
 
+      {/* Camera View */}
+      {isCameraActive && (
+        <Card className="mb-8">
+          <CardContent className="p-6">
+            <div className="relative">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                className="w-full h-64 object-cover rounded-lg border"
+              />
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 space-x-4">
+                <Button onClick={capturePhoto} className="bg-white text-black hover:bg-gray-100">
+                  <Camera className="w-4 h-4 mr-2" />
+                  Capture
+                </Button>
+                <Button variant="outline" onClick={stopCamera} className="bg-white text-black">
+                  Cancel
+                </Button>
+              </div>
+            </div>
+            <canvas ref={canvasRef} className="hidden" />
+          </CardContent>
+        </Card>
+      )}
+
       {/* Image Preview and Scan */}
-      {selectedImage && (
+      {selectedImage && !isCameraActive && (
         <Card className="mb-8">
           <CardContent className="p-6">
             <div className="grid md:grid-cols-2 gap-6">
@@ -160,16 +328,19 @@ const AIObjectRecognition = ({ onBack }) => {
               <div className="mt-6">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium">AI Processing</span>
-                  <span className="text-sm text-gray-500">{scanProgress}%</span>
+                  <span className="text-sm text-gray-500">{Math.round(scanProgress)}%</span>
                 </div>
                 <Progress value={scanProgress} className="mb-4" />
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
                   <Sparkles className="w-4 h-4 animate-pulse text-purple-500" />
                   <span>
-                    {scanProgress < 30 ? 'Detecting object boundaries...' :
-                     scanProgress < 60 ? 'Analyzing features and condition...' :
-                     scanProgress < 90 ? 'Comparing with database...' :
-                     'Generating insights...'}
+                    {scanProgress < 15 ? 'Loading computer vision model...' :
+                     scanProgress < 30 ? 'Detecting object boundaries...' :
+                     scanProgress < 45 ? 'Extracting visual features...' :
+                     scanProgress < 60 ? 'Analyzing object characteristics...' :
+                     scanProgress < 75 ? 'Comparing with knowledge base...' :
+                     scanProgress < 90 ? 'Determining condition and value...' :
+                     'Generating market insights...'}
                   </span>
                 </div>
               </div>
@@ -194,7 +365,9 @@ const AIObjectRecognition = ({ onBack }) => {
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Confidence:</span>
-                    <Badge className="bg-green-500">{scanResult.confidence}%</Badge>
+                    <Badge className={scanResult.confidence > 85 ? "bg-green-500" : "bg-yellow-500"}>
+                      {scanResult.confidence}%
+                    </Badge>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Category:</span>
@@ -241,7 +414,10 @@ const AIObjectRecognition = ({ onBack }) => {
                   <Button variant="outline">
                     View Similar Items
                   </Button>
-                  <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
+                  <Button 
+                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+                    onClick={() => window.setCurrentView && window.setCurrentView('add-item')}
+                  >
                     Create Listing
                   </Button>
                 </div>
@@ -267,7 +443,7 @@ const AIObjectRecognition = ({ onBack }) => {
               </div>
               <h4 className="font-semibold mb-2">Object Detection</h4>
               <p className="text-sm text-gray-600">
-                Identifies items with 95%+ accuracy using computer vision
+                Identifies items with 89%+ accuracy using computer vision
               </p>
             </div>
             

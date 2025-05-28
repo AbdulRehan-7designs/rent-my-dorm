@@ -53,20 +53,109 @@ const AddItemPage = ({ onBack }) => {
 
   const removeImage = (id: number) => {
     setImages(prev => prev.filter(img => img.id !== id));
+    // Reset AI detection if images are removed
+    if (images.length <= 1) {
+      setAiDetection(null);
+    }
   };
 
-  const handleAIDetection = () => {
-    setTimeout(() => {
-      setAiDetection({
-        item: 'MacBook Pro 13-inch',
-        confidence: 95,
-        category: 'Electronics',
-        suggestedPrice: '₹800/day',
-        condition: 'Excellent'
-      });
+  const analyzeImagesWithAI = async () => {
+    if (images.length === 0) {
       toast({
-        title: "AI Detection Complete! 🤖",
-        description: "Item details have been auto-filled based on image analysis",
+        title: "No Images",
+        description: "Please upload at least one image for AI analysis",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // More realistic analysis based on common rental items
+    const itemAnalysis = [
+      {
+        keywords: ['laptop', 'computer', 'macbook'],
+        analysis: {
+          item: 'MacBook Pro 13-inch',
+          confidence: Math.floor(Math.random() * 10) + 85,
+          category: 'electronics',
+          suggestedPrice: '₹800',
+          condition: 'Good',
+          marketDemand: 'High' as const,
+          features: [
+            'Apple M2 chip detected',
+            'Retina display quality',
+            'Good physical condition',
+            'No visible damage'
+          ]
+        }
+      },
+      {
+        keywords: ['book', 'textbook'],
+        analysis: {
+          item: 'Academic Textbook',
+          confidence: Math.floor(Math.random() * 8) + 90,
+          category: 'books',
+          suggestedPrice: '₹50',
+          condition: 'Good',
+          marketDemand: 'Medium' as const,
+          features: [
+            'Text clearly readable',
+            'Pages in good condition',
+            'No major damage',
+            'Standard textbook format'
+          ]
+        }
+      },
+      {
+        keywords: ['phone', 'mobile', 'smartphone'],
+        analysis: {
+          item: 'Smartphone',
+          confidence: Math.floor(Math.random() * 12) + 82,
+          category: 'electronics',
+          suggestedPrice: '₹300',
+          condition: 'Good',
+          marketDemand: 'High' as const,
+          features: [
+            'Screen in good condition',
+            'No visible cracks',
+            'Functional buttons',
+            'Standard smartphone'
+          ]
+        }
+      },
+      {
+        keywords: ['camera', 'dslr'],
+        analysis: {
+          item: 'Digital Camera',
+          confidence: Math.floor(Math.random() * 8) + 87,
+          category: 'electronics',
+          suggestedPrice: '₹600',
+          condition: 'Excellent',
+          marketDemand: 'Medium' as const,
+          features: [
+            'High resolution sensor',
+            'Lens in good condition',
+            'All controls functional',
+            'Professional quality'
+          ]
+        }
+      }
+    ];
+
+    toast({
+      title: "Analyzing Images...",
+      description: "AI is processing your images",
+    });
+
+    // Simulate AI processing time
+    setTimeout(() => {
+      // Select a random analysis for demo purposes
+      const randomAnalysis = itemAnalysis[Math.floor(Math.random() * itemAnalysis.length)];
+      
+      setAiDetection(randomAnalysis.analysis);
+      
+      toast({
+        title: "AI Analysis Complete! 🤖",
+        description: `Detected: ${randomAnalysis.analysis.item} with ${randomAnalysis.analysis.confidence}% confidence`,
       });
     }, 2000);
   };
@@ -74,8 +163,14 @@ const AddItemPage = ({ onBack }) => {
   const handleApplySuggestions = () => {
     if (aiDetection) {
       handleInputChange('title', aiDetection.item);
-      handleInputChange('category', aiDetection.category.toLowerCase());
-      handleInputChange('price', '800');
+      handleInputChange('category', aiDetection.category);
+      handleInputChange('price', aiDetection.suggestedPrice.replace('₹', ''));
+      handleInputChange('condition', aiDetection.condition.toLowerCase());
+      
+      toast({
+        title: "Suggestions Applied! ✨",
+        description: "AI suggestions have been applied to your form",
+      });
     }
   };
 
@@ -89,10 +184,34 @@ const AddItemPage = ({ onBack }) => {
       return;
     }
 
+    if (images.length === 0) {
+      toast({
+        title: "No Images",
+        description: "Please upload at least one image of your item",
+        variant: "destructive"
+      });
+      return;
+    }
+
     toast({
       title: "Listing Created! 🎉",
       description: "Your item is now available for rent",
     });
+    
+    // Reset form
+    setFormData({
+      title: '',
+      description: '',
+      category: '',
+      price: '',
+      priceType: 'day',
+      location: '',
+      availability: '',
+      condition: '',
+      deposit: ''
+    });
+    setImages([]);
+    setAiDetection(null);
   };
 
   return (
@@ -119,8 +238,9 @@ const AddItemPage = ({ onBack }) => {
           />
           <AIDetection 
             aiDetection={aiDetection} 
-            onAIDetection={handleAIDetection} 
+            onAIDetection={analyzeImagesWithAI} 
             onApplySuggestions={handleApplySuggestions} 
+            images={images}
           />
           <Button 
             onClick={handleSubmit}
