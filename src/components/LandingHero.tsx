@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { GraduationCap, Users, Zap, Shield, TrendingUp, Star, Gift, Award, Sparkles, Bot, Camera, Brain, ArrowRight, Play } from 'lucide-react';
+import { GraduationCap, Users, Zap, Shield, TrendingUp, Star, Gift, Award, Sparkles, Bot, Camera, Brain, ArrowRight, Play, Rocket, School, Lightbulb } from 'lucide-react';
 import AuthModal from './AuthModal';
 
 const LandingHero = ({ onLogin }) => {
@@ -53,11 +53,32 @@ const LandingHero = ({ onLogin }) => {
     }
   ];
 
+  // Updated stats for student-focused community
   const stats = [
-    { number: "10,000+", label: "Active Students", icon: Users, trend: "+2.3K this month" },
-    { number: "500+", label: "Partner Colleges", icon: GraduationCap, trend: "+50 new" },
-    { number: "₹50L+", label: "Value Exchanged", icon: TrendingUp, trend: "+300% growth" },
-    { number: "4.9★", label: "User Rating", icon: Star, trend: "99% satisfaction" }
+    { 
+      icon: "🧑‍🎓", 
+      title: "100+ students signed up for early access",
+      subtitle: "Growing community",
+      color: "from-blue-500 to-purple-500"
+    },
+    { 
+      icon: "🏫", 
+      title: "Pilot-ready for colleges across India", 
+      subtitle: "National expansion",
+      color: "from-green-500 to-emerald-500"
+    },
+    { 
+      icon: "💡", 
+      title: "₹0+ Transparent Micro-Renting Value", 
+      subtitle: "Honest pricing",
+      color: "from-yellow-500 to-orange-500"
+    },
+    { 
+      icon: "⭐", 
+      title: "User-first approach with 100% focus on safety", 
+      subtitle: "Safety guaranteed",
+      color: "from-pink-500 to-red-500"
+    }
   ];
 
   const FloatingElement = ({ delay, children, className = "" }) => (
@@ -250,26 +271,34 @@ const LandingHero = ({ onLogin }) => {
         </div>
       </div>
 
-      {/* Enhanced Stats Section */}
+      {/* Updated Student Community Section */}
       <div className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">🏆 Trusted by Thousands</h2>
-            <p className="text-gray-600">Join India's fastest-growing campus community</p>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              🚀 Built for Students, by Students
+            </h2>
+            <p className="text-xl text-gray-600">Join the upcoming campus community revolution</p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center group hover:scale-110 transition-transform duration-300">
-                <div className="w-20 h-20 bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:rotate-6 transition-transform duration-300 shadow-lg relative overflow-hidden">
-                  <stat.icon className="w-10 h-10 text-white relative z-10" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div key={index} className="group hover:scale-105 transition-transform duration-300">
+                <div className={`bg-gradient-to-r ${stat.color} rounded-3xl p-8 text-white shadow-lg hover:shadow-xl transition-shadow duration-300 relative overflow-hidden`}>
+                  {/* Background pattern */}
+                  <div className="absolute top-4 right-4 text-6xl opacity-10 group-hover:opacity-20 transition-opacity">
+                    {stat.icon}
+                  </div>
+                  
+                  <div className="relative z-10">
+                    <div className="text-4xl mb-4">{stat.icon}</div>
+                    <h3 className="text-xl font-bold mb-2">{stat.title}</h3>
+                    <p className="text-white/80 text-sm font-medium">{stat.subtitle}</p>
+                  </div>
+                  
+                  {/* Animated overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
-                <div className="text-4xl font-bold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
-                  {stat.number}
-                </div>
-                <div className="text-gray-600 font-medium mb-1">{stat.label}</div>
-                <div className="text-sm text-green-600 font-semibold">{stat.trend}</div>
               </div>
             ))}
           </div>

@@ -71,14 +71,26 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ images, onImageUpload, onRemo
           if (hiddenFileInputRef.current) {
             hiddenFileInputRef.current.files = dataTransfer.files;
             
-            // Create a proper event
-            const event = new Event('change', { bubbles: true });
-            Object.defineProperty(event, 'target', {
-              writable: false,
-              value: hiddenFileInputRef.current
-            });
+            // Create a proper synthetic event that matches React.ChangeEvent<HTMLInputElement>
+            const syntheticEvent = {
+              target: hiddenFileInputRef.current,
+              currentTarget: hiddenFileInputRef.current,
+              type: 'change',
+              bubbles: true,
+              cancelable: true,
+              defaultPrevented: false,
+              eventPhase: 2,
+              isTrusted: false,
+              nativeEvent: new Event('change'),
+              preventDefault: () => {},
+              stopPropagation: () => {},
+              isPropagationStopped: () => false,
+              isDefaultPrevented: () => false,
+              persist: () => {},
+              timeStamp: Date.now()
+            } as React.ChangeEvent<HTMLInputElement>;
             
-            onImageUpload(event as React.ChangeEvent<HTMLInputElement>);
+            onImageUpload(syntheticEvent);
           }
           
           stopCamera();
