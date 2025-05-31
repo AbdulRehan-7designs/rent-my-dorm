@@ -25,7 +25,7 @@ import AdminApprovalsPage from '@/components/AdminApprovalsPage';
 import AdminAnnouncementsPage from '@/components/AdminAnnouncementsPage';
 import RentalConfirmation from '@/components/RentalConfirmation';
 import TransactionCompletion from '@/components/TransactionCompletion';
-import SecurityDashboard from '@/components/SecurityDashboard';
+import SecurityDashboard from '@/components/Security/SecurityDashboard';
 
 // Extend the Window interface to include setCurrentView
 declare global {

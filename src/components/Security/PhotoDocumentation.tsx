@@ -56,8 +56,11 @@ const PhotoDocumentation: React.FC<PhotoDocumentationProps> = ({
           // Simulate AI analysis
           setIsAnalyzing(true);
           setTimeout(() => {
+            const conditionOptions: Array<'excellent' | 'good' | 'fair' | 'poor'> = ['excellent', 'good', 'fair', 'poor'];
+            const randomCondition = conditionOptions[Math.random() > 0.3 ? 1 : 2]; // More likely to be 'good' or 'fair'
+            
             const aiAnalysis = {
-              condition: Math.random() > 0.3 ? 'good' : 'fair' as const,
+              condition: randomCondition,
               damageDetected: Math.random() > 0.7,
               confidence: Math.floor(Math.random() * 20) + 80,
               issues: Math.random() > 0.5 ? [] : ['Minor scratches detected', 'Surface wear visible']
