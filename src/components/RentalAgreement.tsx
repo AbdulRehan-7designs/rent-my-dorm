@@ -261,7 +261,7 @@ const RentalAgreement: React.FC<RentalAgreementProps> = ({
                 <Checkbox 
                   id="read-terms" 
                   checked={hasReadTerms}
-                  onCheckedChange={setHasReadTerms}
+                  onCheckedChange={(checked) => setHasReadTerms(checked === true)}
                 />
                 <label htmlFor="read-terms" className="text-sm text-gray-700">
                   I have read and understood all terms and conditions
@@ -271,7 +271,7 @@ const RentalAgreement: React.FC<RentalAgreementProps> = ({
                 <Checkbox 
                   id="agree-terms" 
                   checked={agreedToTerms}
-                  onCheckedChange={setAgreedToTerms}
+                  onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
                 />
                 <label htmlFor="agree-terms" className="text-sm text-gray-700">
                   I agree to abide by all rules and accept the consequences of violations

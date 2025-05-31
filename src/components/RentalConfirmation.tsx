@@ -331,4 +331,4 @@ const RentalConfirmation: React.FC<RentalConfirmationProps> = ({
   );
 };
 
-export default RentalAgreement;
+export default RentalConfirmation;
