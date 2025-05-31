@@ -21,6 +21,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ images, onImageUpload, onRemo
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const hiddenFileInputRef = useRef<HTMLInputElement>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
 
@@ -31,7 +32,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ images, onImageUpload, onRemo
         video: { 
           width: { ideal: 1280 },
           height: { ideal: 720 },
-          facingMode: 'environment' // Use back camera on mobile if available
+          facingMode: 'environment'
         } 
       });
       
@@ -60,17 +61,26 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ images, onImageUpload, onRemo
       
       canvas.toBlob((blob) => {
         if (blob) {
-          // Create a File object from the blob
           const file = new File([blob], `camera-photo-${Date.now()}.jpg`, { type: 'image/jpeg' });
           
-          // Create a synthetic event to match the expected format
-          const syntheticEvent = {
-            target: {
-              files: [file]
-            }
-          } as React.ChangeEvent<HTMLInputElement>;
+          // Create a proper FileList-like object
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
           
-          onImageUpload(syntheticEvent);
+          // Use the hidden input to trigger the upload
+          if (hiddenFileInputRef.current) {
+            hiddenFileInputRef.current.files = dataTransfer.files;
+            
+            // Create a proper event
+            const event = new Event('change', { bubbles: true });
+            Object.defineProperty(event, 'target', {
+              writable: false,
+              value: hiddenFileInputRef.current
+            });
+            
+            onImageUpload(event as React.ChangeEvent<HTMLInputElement>);
+          }
+          
           stopCamera();
         }
       }, 'image/jpeg', 0.8);
@@ -158,6 +168,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ images, onImageUpload, onRemo
             )}
           </TabsContent>
         </Tabs>
+
+        {/* Hidden input for camera captured files */}
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          ref={hiddenFileInputRef}
+        />
 
         {images.length > 0 && (
           <div className="grid grid-cols-2 gap-4 mt-4">
