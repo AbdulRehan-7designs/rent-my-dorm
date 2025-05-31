@@ -12,9 +12,11 @@ import {
   Calendar,
   MapPin,
   Package,
-  User
+  User,
+  FileText
 } from 'lucide-react';
 import FeeBreakdown from './FeeBreakdown';
+import RentalAgreement from './RentalAgreement';
 import { calculateTransactionFee, UserRentalHistory } from '@/utils/feeCalculation';
 import { escrowService } from '@/utils/escrowManager';
 
@@ -55,7 +57,8 @@ const RentalConfirmation: React.FC<RentalConfirmationProps> = ({
   onCancel
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showFeeBreakdown, setShowFeeBreakdown] = useState(true);
+  const [showAgreement, setShowAgreement] = useState(false);
+  const [agreementSigned, setAgreementSigned] = useState(false);
 
   // Calculate total rental amount
   const totalRentalAmount = item.price * item.duration;
@@ -63,7 +66,29 @@ const RentalConfirmation: React.FC<RentalConfirmationProps> = ({
   // Calculate fees
   const feeCalculation = calculateTransactionFee(totalRentalAmount, renter.rentalHistory);
 
+  const handleShowAgreement = () => {
+    setShowAgreement(true);
+  };
+
+  const handleAgreementSigned = () => {
+    setAgreementSigned(true);
+    setShowAgreement(false);
+    toast({
+      title: "Agreement Signed! 📃",
+      description: "Digital rental agreement completed. You can now proceed with payment.",
+    });
+  };
+
   const handleConfirmRental = async () => {
+    if (!agreementSigned) {
+      toast({
+        title: "Agreement Required",
+        description: "Please sign the rental agreement before proceeding",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsProcessing(true);
 
     try {
@@ -103,6 +128,27 @@ const RentalConfirmation: React.FC<RentalConfirmationProps> = ({
       setIsProcessing(false);
     }
   };
+
+  // Show rental agreement if requested
+  if (showAgreement) {
+    const startDate = new Date().toLocaleDateString();
+    const endDate = new Date(Date.now() + item.duration * 24 * 60 * 60 * 1000).toLocaleDateString();
+    
+    return (
+      <RentalAgreement
+        lenderName={item.vendor.name}
+        borrowerName={renter.name}
+        itemName={item.title}
+        startDate={startDate}
+        returnDate={endDate}
+        rentalFee={totalRentalAmount}
+        platformFee={feeCalculation.commissionFee}
+        totalAmount={totalRentalAmount}
+        onAgree={handleAgreementSigned}
+        onCancel={() => setShowAgreement(false)}
+      />
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -203,6 +249,41 @@ const RentalConfirmation: React.FC<RentalConfirmationProps> = ({
         </div>
       </div>
 
+      {/* Rental Agreement Section */}
+      <Card className={`border-2 ${agreementSigned ? 'border-green-200 bg-green-50' : 'border-orange-200 bg-orange-50'}`}>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <FileText className={`w-6 h-6 ${agreementSigned ? 'text-green-600' : 'text-orange-600'}`} />
+              <div>
+                <h4 className={`font-semibold ${agreementSigned ? 'text-green-900' : 'text-orange-900'}`}>
+                  {agreementSigned ? '✅ Rental Agreement Signed' : '📃 Digital Rental Agreement Required'}
+                </h4>
+                <p className={`text-sm ${agreementSigned ? 'text-green-700' : 'text-orange-700'}`}>
+                  {agreementSigned 
+                    ? 'Agreement completed. You can now proceed with payment.'
+                    : 'Please review and sign the rental agreement before proceeding.'
+                  }
+                </p>
+              </div>
+            </div>
+            {!agreementSigned && (
+              <Button 
+                variant="outline" 
+                onClick={handleShowAgreement}
+                className="border-orange-300 text-orange-700 hover:bg-orange-100"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Review Agreement
+              </Button>
+            )}
+            {agreementSigned && (
+              <CheckCircle className="w-6 h-6 text-green-600" />
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Action Buttons */}
       <div className="flex space-x-4 justify-center">
         <Button 
@@ -215,7 +296,7 @@ const RentalConfirmation: React.FC<RentalConfirmationProps> = ({
         </Button>
         <Button 
           onClick={handleConfirmRental}
-          disabled={isProcessing}
+          disabled={isProcessing || !agreementSigned}
           size="lg"
           className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
         >
@@ -250,4 +331,4 @@ const RentalConfirmation: React.FC<RentalConfirmationProps> = ({
   );
 };
 
-export default RentalConfirmation;
+export default RentalAgreement;
