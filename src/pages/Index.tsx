@@ -25,6 +25,7 @@ import AdminApprovalsPage from '@/components/AdminApprovalsPage';
 import AdminAnnouncementsPage from '@/components/AdminAnnouncementsPage';
 import RentalConfirmation from '@/components/RentalConfirmation';
 import TransactionCompletion from '@/components/TransactionCompletion';
+import SecurityDashboard from '@/components/SecurityDashboard';
 
 // Extend the Window interface to include setCurrentView
 declare global {
@@ -203,6 +204,10 @@ const Index = ({ currentUser: propCurrentUser, onLogin: propOnLogin }) => {
             </Button>
           </div>
         );
+      
+      // Add new security dashboard case
+      case 'security-dashboard':
+        return <SecurityDashboard onBack={() => setCurrentView('student-dashboard')} />;
       
       default:
         return <LandingHero onLogin={handleLogin} />;
