@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,6 +18,8 @@ import {
   ThumbsUp,
   Eye
 } from 'lucide-react';
+import { AIRecommendationEngine } from '@/services/aiRecommendations';
+import { AIContextualRecommendations } from '@/services/aiContextualRecommendations';
 
 const AIRecommendations = ({ onBack, user }) => {
   const [recommendations, setRecommendations] = useState([]);
@@ -27,106 +28,149 @@ const AIRecommendations = ({ onBack, user }) => {
 
   const filters = [
     { id: 'all', name: 'All Recommendations', icon: Sparkles },
+    { id: 'contextual', name: 'Smart Context', icon: Brain },
     { id: 'trending', name: 'Trending Now', icon: TrendingUp },
     { id: 'nearby', name: 'Near You', icon: MapPin },
     { id: 'budget', name: 'Budget Friendly', icon: Target }
   ];
 
-  const aiRecommendations = [
-    {
-      id: 1,
-      title: 'Gaming Laptop - ASUS ROG',
-      description: 'Perfect for your Computer Science projects',
-      price: '₹1,200/day',
-      rating: 4.9,
-      reviews: 18,
-      location: 'IIT Delhi - 0.5km away',
-      owner: 'Arjun Singh',
-      reason: 'Recommended because you frequently rent tech items and have upcoming project deadlines',
-      confidence: 92,
-      category: 'electronics',
-      image: '/placeholder.svg',
-      aiInsights: [
-        'High demand in your area',
-        'Perfect for gaming and coding',
-        '95% positive reviews'
-      ]
-    },
-    {
-      id: 2,
-      title: 'Data Structures & Algorithms Books',
-      description: 'Complete set with practice problems',
-      price: '₹80/week',
-      rating: 4.7,
-      reviews: 25,
-      location: 'Your College Library',
-      owner: 'Priya Sharma',
-      reason: 'Based on your Computer Science branch and exam schedule',
-      confidence: 88,
-      category: 'books',
-      image: '/placeholder.svg',
-      aiInsights: [
-        'Exam season approaching',
-        'High rating from CS students',
-        'Recently updated edition'
-      ]
-    },
-    {
-      id: 3,
-      title: 'Professional Camera Kit',
-      description: 'DSLR with multiple lenses for events',
-      price: '₹800/day',
-      rating: 4.8,
-      reviews: 12,
-      location: 'VIT Vellore - 2km away',
-      owner: 'Rahul Gupta',
-      reason: 'You showed interest in photography equipment last month',
-      confidence: 76,
-      category: 'electronics',
-      image: '/placeholder.svg',
-      aiInsights: [
-        'Cultural fest season',
-        'Professional quality',
-        'Includes editing software'
-      ]
-    },
-    {
-      id: 4,
-      title: 'Ergonomic Study Chair',
-      description: 'Comfortable chair for long study sessions',
-      price: '₹150/day',
-      rating: 4.6,
-      reviews: 31,
-      location: 'NIT Trichy - 1km away',
-      owner: 'Sneha Patel',
-      reason: 'AI detected you spend 8+ hours studying daily',
-      confidence: 85,
-      category: 'furniture',
-      image: '/placeholder.svg',
-      aiInsights: [
-        'Reduces back strain',
-        'Popular among students',
-        'Easy pickup/delivery'
-      ]
-    }
-  ];
-
   useEffect(() => {
-    // Simulate AI processing
+    // Generate AI recommendations using our new services
     setIsLoading(true);
+    
     setTimeout(() => {
-      setRecommendations(aiRecommendations);
-      setIsLoading(false);
-    }, 2000);
-  }, []);
+      const studentProfile = {
+        courses: ['Data Structures and Algorithms', 'Linear Algebra'],
+        examDates: [new Date(Date.now() + 21 * 24 * 60 * 60 * 1000)], // 3 weeks from now
+        rentalHistory: ['gaming consoles', 'board games', 'study materials'],
+        campus: user?.college || 'IIT Delhi',
+        year: 2,
+        preferences: ['tech', 'gaming', 'study']
+      };
 
-  const filteredRecommendations = recommendations.filter(item => {
-    if (selectedFilter === 'all') return true;
-    if (selectedFilter === 'trending') return item.confidence > 85;
-    if (selectedFilter === 'nearby') return item.location.includes('0.5km') || item.location.includes('1km');
-    if (selectedFilter === 'budget') return parseInt(item.price.replace('₹', '')) < 500;
-    return true;
-  });
+      const campusContext = {
+        campusName: studentProfile.campus,
+        currentSeason: 'summer' as const,
+        upcomingEvents: ['Mid-term Exams', 'Tech Fest'],
+        examPeriod: true,
+        festivalSeason: false
+      };
+
+      // Generate different types of recommendations
+      const subjectRecommendations = AIRecommendationEngine.getSubjectBasedRecommendations(
+        studentProfile.courses, 3
+      );
+      
+      const crossSellRecommendations = AIRecommendationEngine.getCrossSellRecommendations(
+        studentProfile.rentalHistory
+      );
+      
+      const contextualRecommendations = AIRecommendationEngine.getContextualRecommendations(
+        { timeContext: 'exam-period', urgency: 'planned', budget: 'medium' },
+        studentProfile.campus
+      );
+
+      const campusTrending = AIContextualRecommendations.getCampusTrendingItems(
+        campusContext,
+        {
+          mostRentedItems: ['Gaming Laptop', 'Air Cooler', 'Study Chair'],
+          emergingNeeds: ['Noise Cancelling Headphones', 'Power Bank'],
+          seasonalDemand: ['Cooling Solutions', 'Hydration Items']
+        }
+      );
+
+      // Combine and format recommendations
+      const allRecommendations = [
+        ...subjectRecommendations.slice(0, 3),
+        ...crossSellRecommendations.slice(0, 2),
+        ...contextualRecommendations.slice(0, 2),
+        ...campusTrending.slice(0, 3)
+      ];
+
+      const formattedRecommendations = allRecommendations.map((item, index) => ({
+        id: index + 1,
+        title: item,
+        description: getItemDescription(item),
+        price: getEstimatedPrice(item),
+        rating: (4.5 + Math.random() * 0.5).toFixed(1),
+        reviews: Math.floor(Math.random() * 30) + 10,
+        location: `${studentProfile.campus} - ${(Math.random() * 2).toFixed(1)}km away`,
+        owner: getRandomOwner(),
+        reason: getRecommendationReason(item, studentProfile),
+        confidence: Math.floor(85 + Math.random() * 10),
+        category: getCategoryFromItem(item),
+        image: '/placeholder.svg',
+        aiInsights: getAIInsights(item)
+      }));
+
+      setRecommendations(formattedRecommendations);
+      setIsLoading(false);
+    }, 2500);
+  }, [user]);
+
+  const getItemDescription = (item: string): string => {
+    const descriptions: Record<string, string> = {
+      'Gaming Laptop': 'High-performance laptop perfect for gaming and coding projects',
+      'Air Cooler': 'Energy-efficient cooling solution for hot summer days',
+      'Study Chair': 'Ergonomic chair designed for long study sessions',
+      'Programming Books (CLRS, Cormen)': 'Complete algorithms reference with practice problems',
+      'Scientific Calculator': 'Advanced calculator for engineering and mathematics',
+      'Noise Cancelling Headphones': 'Premium headphones for focused studying',
+      'Coffee Maker': 'Compact coffee maker for all-night study sessions'
+    };
+    return descriptions[item] || `Quality ${item.toLowerCase()} perfect for student needs`;
+  };
+
+  const getEstimatedPrice = (item: string): string => {
+    const prices: Record<string, string> = {
+      'Gaming Laptop': '₹800/day',
+      'Air Cooler': '₹150/day', 
+      'Study Chair': '₹100/day',
+      'Programming Books (CLRS, Cormen)': '₹60/day',
+      'Scientific Calculator': '₹40/day',
+      'Noise Cancelling Headphones': '₹200/day',
+      'Coffee Maker': '₹80/day'
+    };
+    return prices[item] || '₹100/day';
+  };
+
+  const getRandomOwner = (): string => {
+    const owners = ['Arjun Singh', 'Priya Sharma', 'Rahul Gupta', 'Sneha Patel', 'Vikram Joshi', 'Ananya Reddy'];
+    return owners[Math.floor(Math.random() * owners.length)];
+  };
+
+  const getRecommendationReason = (item: string, profile: any): string => {
+    if (item.includes('Programming') || item.includes('CLRS')) {
+      return `Perfect for your ${profile.courses.find((c: string) => c.includes('Data Structures'))} course with exams approaching`;
+    }
+    if (item.includes('Calculator')) {
+      return `Essential for your ${profile.courses.find((c: string) => c.includes('Linear Algebra'))} calculations`;
+    }
+    if (item.includes('Gaming')) {
+      return 'Based on your gaming preferences and need for high-performance computing';
+    }
+    if (item.includes('Cooler') || item.includes('cooling')) {
+      return 'Summer season essential for comfortable studying in hot weather';
+    }
+    return 'AI detected this matches your study patterns and upcoming needs';
+  };
+
+  const getCategoryFromItem = (item: string): string => {
+    if (item.includes('Laptop') || item.includes('Calculator') || item.includes('Headphones')) return 'electronics';
+    if (item.includes('Book')) return 'books';
+    if (item.includes('Chair')) return 'furniture';
+    if (item.includes('Cooler') || item.includes('Coffee')) return 'appliances';
+    return 'general';
+  };
+
+  const getAIInsights = (item: string): string[] => {
+    const insights: Record<string, string[]> = {
+      'Gaming Laptop': ['High demand in tech students', 'Perfect for coding marathons', '95% positive feedback'],
+      'Air Cooler': ['Summer essential item', 'Energy efficient option', 'Popular in hostels'],
+      'Programming Books (CLRS, Cormen)': ['Exam season essential', 'CS students favorite', 'Latest edition available']
+    };
+    return insights[item] || ['High quality item', 'Student recommended', 'Available nearby'];
+  };
 
   if (isLoading) {
     return (
@@ -135,7 +179,7 @@ const AIRecommendations = ({ onBack, user }) => {
           <Button variant="ghost" onClick={onBack} className="mr-4">
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900">AI Recommendations</h1>
+          <h1 className="text-3xl font-bold text-gray-900">AI Smart Recommendations</h1>
         </div>
         
         <div className="text-center py-12">
@@ -143,12 +187,21 @@ const AIRecommendations = ({ onBack, user }) => {
             <Brain className="w-20 h-20 text-purple-500 animate-pulse" />
             <div className="absolute inset-0 border-4 border-purple-200 rounded-full animate-spin border-t-purple-500"></div>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">AI is analyzing your preferences...</h3>
-          <p className="text-gray-600">Finding the perfect items just for you</p>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">AI is analyzing your academic profile...</h3>
+          <p className="text-gray-600">Generating personalized recommendations based on your courses and campus trends</p>
         </div>
       </div>
     );
   }
+
+  const filteredRecommendations = recommendations.filter(item => {
+    if (selectedFilter === 'all') return true;
+    if (selectedFilter === 'contextual') return item.confidence > 88;
+    if (selectedFilter === 'trending') return item.confidence > 85;
+    if (selectedFilter === 'nearby') return item.location.includes('0.5km') || item.location.includes('1km');
+    if (selectedFilter === 'budget') return parseInt(item.price.replace('₹', '')) < 200;
+    return true;
+  });
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -162,7 +215,7 @@ const AIRecommendations = ({ onBack, user }) => {
             <Brain className="w-8 h-8 text-purple-500" />
             <span>AI Smart Recommendations</span>
           </h1>
-          <p className="text-gray-600 mt-2">Personalized suggestions powered by machine learning</p>
+          <p className="text-gray-600 mt-2">Personalized suggestions powered by advanced algorithms</p>
         </div>
       </div>
 
@@ -171,28 +224,28 @@ const AIRecommendations = ({ onBack, user }) => {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2 text-purple-800">
             <Sparkles className="w-5 h-5" />
-            <span>Your AI Profile</span>
+            <span>Your AI Academic Profile</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600 mb-1">92%</div>
-              <div className="text-sm text-gray-600">Match Accuracy</div>
+              <div className="text-2xl font-bold text-purple-600 mb-1">94%</div>
+              <div className="text-sm text-gray-600">Context Accuracy</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600 mb-1">Tech Enthusiast</div>
-              <div className="text-sm text-gray-600">Primary Interest</div>
+              <div className="text-2xl font-bold text-blue-600 mb-1">CS Student</div>
+              <div className="text-sm text-gray-600">Profile Type</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600 mb-1">₹800</div>
-              <div className="text-sm text-gray-600">Avg Budget</div>
+              <div className="text-2xl font-bold text-green-600 mb-1">Exam Mode</div>
+              <div className="text-sm text-gray-600">Current Context</div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Filters */}
+      {/* Enhanced Filters */}
       <div className="flex flex-wrap gap-3 mb-8">
         {filters.map((filter) => (
           <Button
@@ -252,12 +305,12 @@ const AIRecommendations = ({ onBack, user }) => {
                     </div>
                   </div>
 
-                  {/* AI Reason */}
-                  <div className="bg-purple-50 rounded-lg p-3 mb-4">
+                  {/* Enhanced AI Reason */}
+                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-3 mb-4">
                     <div className="flex items-start space-x-2">
                       <Brain className="w-4 h-4 text-purple-500 mt-0.5" />
                       <p className="text-sm text-purple-800">
-                        <span className="font-medium">AI Insight: </span>
+                        <span className="font-medium">Smart Insight: </span>
                         {item.reason}
                       </p>
                     </div>
@@ -265,7 +318,7 @@ const AIRecommendations = ({ onBack, user }) => {
 
                   {/* AI Insights */}
                   <div className="mb-4">
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">Why this is perfect for you:</h4>
+                    <h4 className="text-sm font-medium text-gray-900 mb-2">AI Analysis:</h4>
                     <div className="space-y-1">
                       {item.aiInsights.map((insight, index) => (
                         <div key={index} className="flex items-center space-x-2">
@@ -302,16 +355,16 @@ const AIRecommendations = ({ onBack, user }) => {
         ))}
       </div>
 
-      {/* AI Learning Notice */}
-      <Card className="mt-8 bg-blue-50 border-blue-200">
+      {/* Enhanced AI Learning Notice */}
+      <Card className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
         <CardContent className="p-6">
           <div className="flex items-center space-x-3">
             <Zap className="w-6 h-6 text-blue-500" />
             <div>
-              <h3 className="font-semibold text-blue-900">AI is learning from your preferences</h3>
+              <h3 className="font-semibold text-blue-900">Continuous AI Learning</h3>
               <p className="text-sm text-blue-700">
-                The more you interact with items, the better our recommendations become. 
-                Your privacy is protected - we only use anonymous usage patterns.
+                Our AI gets smarter with every interaction! Based on your academic profile, 
+                rental patterns, and campus trends, recommendations become more personalized over time.
               </p>
             </div>
           </div>
