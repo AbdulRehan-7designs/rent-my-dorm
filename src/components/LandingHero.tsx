@@ -1,337 +1,242 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { GraduationCap, Users, Zap, Shield, TrendingUp, Star, Gift, Award, Sparkles, Bot, Camera, Brain, ArrowRight, Play, Rocket, School, Lightbulb } from 'lucide-react';
-import AuthModal from './AuthModal';
 
-const LandingHero = ({ onLogin }) => {
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authType, setAuthType] = useState('login');
-  const [animationClass, setAnimationClass] = useState('');
-  const [currentFeature, setCurrentFeature] = useState(0);
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, Search, Shield, Users, Zap, Rocket, Sparkles, Heart, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-  useEffect(() => {
-    setAnimationClass('animate-fade-in');
-    
-    // Rotate featured items
-    const interval = setInterval(() => {
-      setCurrentFeature(prev => (prev + 1) % 4);
-    }, 3000);
-    
-    return () => clearInterval(interval);
-  }, []);
+const LandingHero = ({ onLogin }: { onLogin: () => void }) => {
+  const navigate = useNavigate();
 
-  const features = [
-    {
-      icon: Brain,
-      title: "AI Smart Matching",
-      description: "Advanced ML algorithms match you with perfect items instantly",
-      color: "from-blue-500 to-cyan-500",
-      bgPattern: "🧠"
-    },
-    {
-      icon: Camera,
-      title: "AI Object Recognition",
-      description: "Instant product verification using computer vision technology",
-      color: "from-orange-500 to-red-500",
-      bgPattern: "📸"
-    },
-    {
-      icon: Bot,
-      title: "AI Chatbot Assistant",
-      description: "24/7 intelligent support powered by natural language processing",
-      color: "from-green-500 to-emerald-500",
-      bgPattern: "🤖"
-    },
-    {
-      icon: Sparkles,
-      title: "Smart Recommendations",
-      description: "Personalized suggestions based on your behavior and preferences",
-      color: "from-purple-500 to-pink-500",
-      bgPattern: "✨"
-    }
-  ];
+  const handleGetStarted = () => {
+    navigate('/auth');
+  };
 
-  // Updated stats for student-focused community
-  const stats = [
-    { 
-      icon: "🧑‍🎓", 
-      title: "100+ students signed up for early access",
-      subtitle: "Growing community",
-      color: "from-blue-500 to-purple-500"
-    },
-    { 
-      icon: "🏫", 
-      title: "Pilot-ready for colleges across India", 
-      subtitle: "National expansion",
-      color: "from-green-500 to-emerald-500"
-    },
-    { 
-      icon: "💡", 
-      title: "₹0+ Transparent Micro-Renting Value", 
-      subtitle: "Honest pricing",
-      color: "from-yellow-500 to-orange-500"
-    },
-    { 
-      icon: "⭐", 
-      title: "User-first approach with 100% focus on safety", 
-      subtitle: "Safety guaranteed",
-      color: "from-pink-500 to-red-500"
-    }
-  ];
+  const handleBrowse = () => {
+    navigate('/browse');
+  };
 
-  const FloatingElement = ({ delay, children, className = "" }) => (
+  // Floating particles component
+  const FloatingParticles = () => (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(20)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute animate-float"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 5}s`,
+            animationDuration: `${3 + Math.random() * 4}s`
+          }}
+        >
+          <div className="w-2 h-2 bg-gradient-to-r from-orange-400 to-red-400 rounded-full opacity-60"></div>
+        </div>
+      ))}
+    </div>
+  );
+
+  // 3D Card component
+  const Feature3D = ({ icon: Icon, title, description, delay }: any) => (
     <div 
-      className={`absolute animate-bounce ${className}`}
-      style={{ animationDelay: `${delay}s`, animationDuration: '3s' }}
+      className="group relative perspective-1000 animate-slide-up"
+      style={{ animationDelay: delay }}
     >
-      {children}
+      <div className="relative transform-gpu transition-all duration-700 group-hover:rotate-y-12 group-hover:scale-105">
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-2xl blur-xl transform scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div className="relative bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-2xl">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="p-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl transform transition-transform group-hover:scale-110 group-hover:rotate-12">
+              <Icon className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-white">{title}</h3>
+          </div>
+          <p className="text-gray-300 leading-relaxed">{description}</p>
+        </div>
+      </div>
     </div>
   );
 
   return (
-    <div className={`min-h-screen overflow-hidden ${animationClass}`}>
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-orange-600 via-red-500 to-pink-600 min-h-screen flex items-center">
-        {/* Animated Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            animation: 'float 20s ease-in-out infinite'
-          }}></div>
-        </div>
-        
-        {/* Floating Elements */}
-        <FloatingElement delay={0} className="top-20 left-10">
-          <div className="w-16 h-16 bg-white/10 rounded-2xl backdrop-blur-sm flex items-center justify-center text-2xl">
-            💻
-          </div>
-        </FloatingElement>
-        
-        <FloatingElement delay={1} className="top-32 right-20">
-          <div className="w-12 h-12 bg-yellow-400/20 rounded-full backdrop-blur-sm flex items-center justify-center text-xl">
-            📚
-          </div>
-        </FloatingElement>
-        
-        <FloatingElement delay={2} className="bottom-40 left-20">
-          <div className="w-20 h-20 bg-pink-400/10 rounded-3xl backdrop-blur-sm flex items-center justify-center text-3xl">
-            🎮
-          </div>
-        </FloatingElement>
-        
-        <FloatingElement delay={0.5} className="top-60 left-1/2 transform -translate-x-1/2">
-          <div className="w-8 h-8 bg-blue-400/20 rounded-full backdrop-blur-sm flex items-center justify-center">
-            ⚡
-          </div>
-        </FloatingElement>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-500/30 to-red-500/30 rounded-full filter blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded-full filter blur-3xl animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full filter blur-3xl animate-spin-slow"></div>
+      </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-          {/* Animated Logo */}
-          <div className="flex justify-center mb-8">
-            <div className="relative">
-              <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-3xl flex items-center justify-center animate-pulse shadow-2xl">
-                <GraduationCap className="w-14 h-14 text-white" />
-              </div>
-              <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center text-lg">
-                🚀
-              </div>
+      <FloatingParticles />
+
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-4 py-20">
+        <div className="text-center mb-16">
+          {/* Main Hero Content */}
+          <div className="mb-8 animate-fade-in">
+            <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-orange-500/20 to-red-500/20 backdrop-blur-sm border border-orange-500/30 rounded-full px-6 py-3 mb-8">
+              <Sparkles className="w-5 h-5 text-orange-400 animate-pulse" />
+              <span className="text-orange-300 font-medium">Campus Rental Revolution</span>
+              <Sparkles className="w-5 h-5 text-orange-400 animate-pulse" />
             </div>
-          </div>
-          
-          {/* Main Heading with Typewriter Effect */}
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            <span className="inline-block animate-scale-in">Rent</span>
-            <span className="text-yellow-300 inline-block animate-scale-in" style={{animationDelay: '0.2s'}}>My</span>
-            <span className="inline-block animate-scale-in" style={{animationDelay: '0.4s'}}>Dorm</span>
-          </h1>
-          
-          <div className="mb-8">
-            <p className="text-2xl md:text-3xl text-white/90 mb-4 font-semibold animate-fade-in" style={{animationDelay: '0.6s'}}>
-              India's First AI-Powered Campus Rental Platform 🇮🇳
-            </p>
             
-            <p className="text-xl text-white/80 mb-8 max-w-3xl mx-auto leading-relaxed animate-fade-in" style={{animationDelay: '0.8s'}}>
-              From books to laptops, furniture to gadgets - rent, lend, and earn within your college community. 
-              Experience the future of sharing with cutting-edge AI!
-            </p>
-          </div>
-
-          {/* Main CTA Buttons */}
-          <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6 mb-12">
-            {/* Primary Sign In Button */}
-            <div className="group relative animate-scale-in" style={{animationDelay: '1s'}}>
-              <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
-              <Button 
-                size="lg" 
-                className="relative bg-white text-orange-600 hover:bg-orange-50 px-12 py-6 text-xl font-bold rounded-3xl shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 border-2 border-white/20"
-                onClick={() => window.location.href = '/login'}
-              >
-                <Sparkles className="w-6 h-6 mr-3 text-orange-500 animate-pulse" />
-                <span>Sign In Now</span>
-                <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform" />
-                <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12"></div>
-              </Button>
-            </div>
-
-            {/* Secondary Get Started Button - Updated text */}
-            <div className="group relative animate-scale-in" style={{animationDelay: '1.2s'}}>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="relative border-2 border-white/50 text-white/90 bg-white/10 backdrop-blur-md hover:bg-white/20 hover:text-white px-10 py-6 text-lg font-semibold rounded-3xl transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-                onClick={() => window.location.href = '/signup'}
-              >
-                <Brain className="w-5 h-5 mr-3 animate-pulse" />
-                <span>Get Started</span>
-                <Play className="w-5 h-5 ml-3 group-hover:scale-110 transition-transform" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Feature Badges */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            <Badge className="bg-yellow-400/90 backdrop-blur-sm text-yellow-900 px-6 py-3 text-sm font-bold animate-pulse hover:scale-110 transition-transform cursor-pointer">
-              🚀 AI-Powered Matching
-            </Badge>
-            <Badge className="bg-green-400/90 backdrop-blur-sm text-green-900 px-6 py-3 text-sm font-bold animate-pulse hover:scale-110 transition-transform cursor-pointer">
-              💳 UPI & Digital Payments
-            </Badge>
-            <Badge className="bg-blue-400/90 backdrop-blur-sm text-blue-900 px-6 py-3 text-sm font-bold animate-pulse hover:scale-110 transition-transform cursor-pointer">
-              🤖 Smart Recommendations
-            </Badge>
-          </div>
-
-          {/* Interactive Demo Preview */}
-          <div className="relative animate-fade-in" style={{animationDelay: '1.4s'}}>
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 mx-auto max-w-2xl border border-white/20">
-              <h3 className="text-xl font-semibold text-white mb-4">🎯 See AI in Action</h3>
-              <div className="text-left space-y-3 text-white/80">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center">✓</div>
-                  <span>Upload item photo → AI identifies instantly</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-blue-400 rounded-full flex items-center justify-center">⚡</div>
-                  <span>Smart price suggestions based on demand</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-purple-400 rounded-full flex items-center justify-center">🎯</div>
-                  <span>Personalized recommendations for you</span>
-                </div>
+            <h1 className="text-7xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-orange-200 to-red-200 mb-6 animate-gradient-x leading-tight">
+              RentMyDorm
+            </h1>
+            
+            <div className="relative inline-block">
+              <Rocket className="w-16 h-16 mx-auto text-orange-500 animate-rocket-launch mb-4" />
+              <div className="absolute -top-2 -right-2">
+                <Star className="w-6 h-6 text-yellow-400 animate-twinkle" />
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* AI Features Showcase */}
-      <div className="py-20 bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold text-gray-900 mb-6">
-              🤖 Powered by Advanced AI & Machine Learning
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Experience the future of campus sharing with cutting-edge artificial intelligence
+            
+            <p className="text-2xl md:text-3xl text-gray-300 mb-4 font-light animate-slide-up" style={{ animationDelay: '0.2s' }}>
+              Share, Rent, Save with your
+            </p>
+            <p className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400 mb-8 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+              Campus Community 🚀
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <Card 
-                key={index} 
-                className={`border-0 shadow-xl hover:shadow-2xl transition-all duration-700 transform hover:scale-110 group bg-gradient-to-br from-white to-gray-50 ${
-                  currentFeature === index ? 'ring-4 ring-orange-300 scale-105' : ''
-                }`}
-              >
-                <CardContent className="p-8 text-center relative overflow-hidden">
-                  {/* Background Pattern */}
-                  <div className="absolute top-4 right-4 text-4xl opacity-10 group-hover:opacity-20 transition-opacity">
-                    {feature.bgPattern}
-                  </div>
-                  
-                  <div className={`w-20 h-20 bg-gradient-to-r ${feature.color} rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:rotate-12 transition-all duration-500 shadow-lg relative`}>
-                    <feature.icon className="w-10 h-10 text-white" />
-                    <div className="absolute inset-0 bg-white/20 rounded-3xl animate-pulse"></div>
-                  </div>
-                  
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-orange-600 transition-colors">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-                  
-                  {/* Hover Effect */}
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-red-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-                </CardContent>
-              </Card>
-            ))}
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20 animate-slide-up" style={{ animationDelay: '0.6s' }}>
+            <Button 
+              onClick={handleGetStarted}
+              size="lg"
+              className="group relative overflow-hidden bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold py-4 px-8 rounded-2xl text-lg shadow-2xl transform transition-all duration-300 hover:scale-110 hover:shadow-orange-500/50"
+            >
+              <span className="relative z-10 flex items-center">
+                Get Started
+                <ArrowRight className="ml-2 w-6 h-6 transition-transform group-hover:translate-x-2" />
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+            </Button>
+            
+            <Button 
+              onClick={handleBrowse}
+              variant="outline"
+              size="lg"
+              className="group border-2 border-white/30 text-white hover:bg-white/10 backdrop-blur-sm font-bold py-4 px-8 rounded-2xl text-lg transition-all duration-300 hover:scale-105 hover:border-orange-400"
+            >
+              <Search className="mr-2 w-5 h-5 transition-transform group-hover:scale-110" />
+              Browse Items
+            </Button>
           </div>
-        </div>
-      </div>
 
-      {/* Updated Student Community Section */}
-      <div className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              🚀 Built for Students, by Students
-            </h2>
-            <p className="text-xl text-gray-600">Join the upcoming campus community revolution</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="group hover:scale-105 transition-transform duration-300">
-                <div className={`bg-gradient-to-r ${stat.color} rounded-3xl p-8 text-white shadow-lg hover:shadow-xl transition-shadow duration-300 relative overflow-hidden`}>
-                  {/* Background pattern */}
-                  <div className="absolute top-4 right-4 text-6xl opacity-10 group-hover:opacity-20 transition-opacity">
-                    {stat.icon}
-                  </div>
-                  
-                  <div className="relative z-10">
-                    <div className="text-4xl mb-4">{stat.icon}</div>
-                    <h3 className="text-xl font-bold mb-2">{stat.title}</h3>
-                    <p className="text-white/80 text-sm font-medium">{stat.subtitle}</p>
-                  </div>
-                  
-                  {/* Animated overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          {/* Statistics */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20 animate-slide-up" style={{ animationDelay: '0.8s' }}>
+            {[
+              { number: "10K+", label: "Happy Students", icon: Users },
+              { number: "50K+", label: "Items Shared", icon: Heart },
+              { number: "500+", label: "Colleges", icon: Shield },
+              { number: "₹2M+", label: "Money Saved", icon: Zap }
+            ].map((stat, index) => (
+              <div key={index} className="text-center group">
+                <div className="relative inline-block mb-2">
+                  <stat.icon className="w-8 h-8 mx-auto text-orange-400 mb-2 transition-transform group-hover:scale-125 group-hover:rotate-12" />
+                  <div className="absolute inset-0 bg-orange-400/20 rounded-full blur-lg scale-150 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
+                <p className="text-3xl font-bold text-white mb-1">{stat.number}</p>
+                <p className="text-gray-400 font-medium">{stat.label}</p>
               </div>
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Final CTA Section */}
-      <div className="py-20 bg-gradient-to-r from-orange-500 to-red-500">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Ready to Experience the Future? 🚀
-          </h2>
-          <p className="text-xl text-white/90 mb-8">
-            Join thousands of students already using AI to revolutionize campus sharing
-          </p>
-          <Button 
-            size="lg"
-            className="bg-white text-orange-600 hover:bg-orange-50 px-12 py-6 text-xl font-bold rounded-3xl shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300"
-            onClick={() => window.location.href = '/signup'}
-          >
-            <Sparkles className="w-6 h-6 mr-3 text-orange-500" />
-            Get Started Today
-            <ArrowRight className="w-6 h-6 ml-3" />
-          </Button>
+        {/* Features Grid */}
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <Feature3D 
+            icon={Zap} 
+            title="Instant Rentals" 
+            description="Need something urgently? Our instant rental system gets you what you need in minutes, not hours."
+            delay="0.2s"
+          />
+          <Feature3D 
+            icon={Shield} 
+            title="Secure & Trusted" 
+            description="Campus-verified users, secure payments, and comprehensive insurance ensure safe transactions every time."
+            delay="0.4s"
+          />
+          <Feature3D 
+            icon={Users} 
+            title="Community Driven" 
+            description="Built by students, for students. Join thousands of peers sharing resources and building connections."
+            delay="0.6s"
+          />
+        </div>
+
+        {/* Call to Action */}
+        <div className="text-center mt-20 animate-slide-up" style={{ animationDelay: '1s' }}>
+          <div className="inline-block bg-gradient-to-r from-orange-500/10 to-red-500/10 backdrop-blur-lg border border-orange-500/20 rounded-3xl p-8">
+            <h2 className="text-3xl font-bold text-white mb-4">Ready to Transform Your Campus Experience?</h2>
+            <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+              Join the campus sharing revolution. Save money, make friends, and live more sustainably.
+            </p>
+            <Button 
+              onClick={handleGetStarted}
+              size="lg"
+              className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold py-3 px-8 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-orange-500/50"
+            >
+              Join RentMyDorm Today
+              <Rocket className="ml-2 w-5 h-5 animate-bounce" />
+            </Button>
+          </div>
         </div>
       </div>
 
-      <AuthModal 
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        type={authType}
-        onLogin={onLogin}
-      />
+      {/* Custom CSS for animations */}
+      <style jsx>{`
+        @keyframes gradient-x {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(1.1); }
+        }
+        
+        @keyframes spin-slow {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes slide-up {
+          0% { opacity: 0; transform: translateY(50px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fade-in {
+          0% { opacity: 0; }
+          100% { opacity: 1; }
+        }
+        
+        @keyframes rocket-launch {
+          0%, 100% { transform: translateY(0) rotate(-45deg); }
+          50% { transform: translateY(-10px) rotate(-35deg); }
+        }
+        
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.5; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        .animate-gradient-x { animation: gradient-x 3s ease infinite; }
+        .animate-float { animation: float 4s ease-in-out infinite; }
+        .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+        .animate-slide-up { animation: slide-up 0.8s ease-out forwards; }
+        .animate-fade-in { animation: fade-in 1s ease-out; }
+        .animate-rocket-launch { animation: rocket-launch 2s ease-in-out infinite; }
+        .animate-twinkle { animation: twinkle 1.5s ease-in-out infinite; }
+        
+        .perspective-1000 { perspective: 1000px; }
+        .rotate-y-12 { transform: rotateY(12deg); }
+      `}</style>
     </div>
   );
 };

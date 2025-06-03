@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener
+    // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
@@ -34,14 +34,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Fetch user profile
+          // Use setTimeout to avoid blocking the auth state change
           setTimeout(async () => {
-            const { data: profileData } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', session.user.id)
-              .single();
-            setProfile(profileData);
+            try {
+              const { data: profileData, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+              
+              if (error) {
+                console.error('Error fetching profile:', error);
+                // If profile doesn't exist, create it
+                if (error.code === 'PGRST116') {
+                  const { data: newProfile, error: createError } = await supabase
+                    .from('profiles')
+                    .insert({
+                      id: session.user.id,
+                      email: session.user.email || '',
+                      full_name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || ''
+                    })
+                    .select()
+                    .single();
+                  
+                  if (!createError && newProfile) {
+                    setProfile(newProfile);
+                  }
+                }
+              } else {
+                setProfile(profileData);
+              }
+            } catch (err) {
+              console.error('Profile fetch error:', err);
+            }
           }, 0);
         } else {
           setProfile(null);
@@ -58,12 +83,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       if (session?.user) {
         setTimeout(async () => {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-          setProfile(profileData);
+          try {
+            const { data: profileData, error } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', session.user.id)
+              .single();
+            
+            if (!error && profileData) {
+              setProfile(profileData);
+            }
+          } catch (err) {
+            console.error('Profile fetch error:', err);
+          }
           setLoading(false);
         }, 0);
       } else {
