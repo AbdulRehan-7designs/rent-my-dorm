@@ -52,7 +52,8 @@ const BrowseItemsPage = () => {
       .eq('is_available', true);
 
     if (selectedCategory !== 'all') {
-      query = query.eq('category', selectedCategory);
+      // Cast to the proper type for the database query
+      query = query.eq('category', selectedCategory as any);
     }
 
     query = query.order(sortBy, { ascending: sortBy === 'price_per_day' });
@@ -115,8 +116,10 @@ const BrowseItemsPage = () => {
                          item.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.tags?.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
     
-    const matchesPrice = (!priceRange.min || parseFloat(item.price_per_day) >= parseFloat(priceRange.min)) &&
-                        (!priceRange.max || parseFloat(item.price_per_day) <= parseFloat(priceRange.max));
+    const pricePerDay = parseFloat(item.price_per_day.toString());
+    const minPrice = priceRange.min ? parseFloat(priceRange.min) : 0;
+    const maxPrice = priceRange.max ? parseFloat(priceRange.max) : Infinity;
+    const matchesPrice = pricePerDay >= minPrice && pricePerDay <= maxPrice;
 
     return matchesSearch && matchesPrice;
   });
