@@ -1,44 +1,72 @@
+import {
+  Home,
+  LayoutDashboard,
+  Settings,
+  ShoppingCart,
+  Users,
+  TrendingUp,
+  Award,
+  Leaf,
+  Heart
+} from "lucide-react";
 
-import React from 'react';
-import { 
-  User, 
-  Search, 
-  Award, 
-  Package, 
-  MessageSquare, 
-  TrendingUp, 
-  Bell,
-  GraduationCap
-} from 'lucide-react';
-
-export const getNavItems = (userRole: string) => {
-  switch (userRole) {
-    case 'student':
-      return [
-        { id: 'student-dashboard', label: 'Dashboard', icon: User },
-        { id: 'browse-items', label: 'Browse Items', icon: Search },
-        { id: 'ai-recommendations', label: 'AI Recommendations', icon: Award },
-        { id: 'ai-object-recognition', label: 'AI Scanner', icon: Package },
-        { id: 'my-rentals', label: 'My Rentals', icon: Package },
-        { id: 'chat', label: 'Messages', icon: MessageSquare },
-        { id: 'leaderboard', label: 'Leaderboard', icon: Award }
-      ];
-    case 'vendor':
-      return [
-        { id: 'vendor-dashboard', label: 'Dashboard', icon: TrendingUp },
-        { id: 'my-listings', label: 'My Listings', icon: Package },
-        { id: 'ai-object-recognition', label: 'AI Verify Items', icon: Package },
-        { id: 'orders', label: 'Orders', icon: Bell },
-        { id: 'analytics', label: 'Analytics', icon: Award }
-      ];
-    case 'admin':
-      return [
-        { id: 'admin-dashboard', label: 'Dashboard', icon: TrendingUp },
-        { id: 'manage-colleges', label: 'Colleges', icon: GraduationCap },
-        { id: 'approve-listings', label: 'Approvals', icon: Package },
-        { id: 'analytics', label: 'Analytics', icon: Award }
-      ];
-    default:
-      return [];
-  }
+export type SidebarNavItem = {
+  title: string;
+  href: string;
+  icon: any;
+  label?: string;
+  description?: string;
 };
+
+const navigationItems: SidebarNavItem[] = [
+  {
+    title: "Home",
+    href: "/",
+    icon: Home,
+    description: "Go to the home page",
+  },
+  {
+    title: "Dashboard",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+    description: "View your dashboard",
+  },
+  {
+    title: "Browse Items",
+    href: "/browse",
+    icon: ShoppingCart,
+    description: "Browse all listed items",
+  },
+  {
+    label: 'Community',
+    href: '/community-wishlist',
+    icon: Heart,
+    description: 'Request items from community'
+  },
+  {
+    label: 'Squad Up',
+    href: '/squad-up',
+    icon: Users,
+    description: 'Group rentals with friends'
+  },
+  {
+    label: 'Campus Pulse',
+    href: '/campus-pulse',
+    icon: TrendingUp,
+    description: 'Your personalized feed'
+  },
+  {
+    label: 'Campus Credits',
+    href: '/campus-credits',
+    icon: Award,
+    description: 'Loyalty rewards program'
+  },
+  {
+    label: 'Sustainability',
+    href: '/sustainability',
+    icon: Leaf,
+    description: 'Your environmental impact'
+  }
+];
+
+export default navigationItems;

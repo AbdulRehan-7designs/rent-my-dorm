@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +13,11 @@ import BrowseItemsPage from "./pages/BrowseItemsPage";
 import DashboardPage from "./pages/DashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NavBar from "./components/NavBar";
+import CommunityWishlist from "./components/CommunityWishlist";
+import SquadUpPage from "./components/SquadUpPage";
+import CampusPulsePage from "./components/CampusPulsePage";
+import CampusCreditsPage from "./components/CampusCreditsPage";
+import SustainabilityPage from "./components/SustainabilityPage";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +38,46 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/community-wishlist" 
+          element={
+            <ProtectedRoute>
+              <CommunityWishlist />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/squad-up" 
+          element={
+            <ProtectedRoute>
+              <SquadUpPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/campus-pulse" 
+          element={
+            <ProtectedRoute>
+              <CampusPulsePage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/campus-credits" 
+          element={
+            <ProtectedRoute>
+              <CampusCreditsPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/sustainability" 
+          element={
+            <ProtectedRoute>
+              <SustainabilityPage />
             </ProtectedRoute>
           } 
         />
