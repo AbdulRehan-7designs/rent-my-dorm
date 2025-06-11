@@ -5,279 +5,371 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Heart, Calendar, DollarSign, Award, Search } from 'lucide-react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { 
+  Heart, 
+  Plus, 
+  MessageCircle, 
+  Calendar, 
+  DollarSign, 
+  Filter,
+  BookOpen,
+  Camera,
+  Gamepad2,
+  Laptop,
+  Users
+} from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface ItemRequest {
   id: string;
-  title: string;
-  description: string;
-  category: string;
-  max_price_per_day: number;
-  needed_from: string;
-  needed_until: string;
-  campus_credits_bounty: number;
   requester_id: string;
+  item_name: string;
+  description?: string;
+  category: string;
+  max_price_per_day?: number;
+  needed_from?: string;
+  needed_until?: string;
+  is_fulfilled: boolean;
+  is_active: boolean;
   created_at: string;
   profiles: {
     full_name: string;
-    campus_credits: number;
   };
 }
 
 const CommunityWishlist = () => {
   const { user } = useAuth();
-  const queryClient = useQueryClient();
-  const [showRequestForm, setShowRequestForm] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const [formData, setFormData] = useState({
-    title: '',
+    item_name: '',
     description: '',
-    category: '',
+    category: 'textbooks',
     max_price_per_day: '',
     needed_from: '',
-    needed_until: '',
-    campus_credits_bounty: '0'
+    needed_until: ''
   });
 
-  // Fetch item requests
-  const { data: requests = [], isLoading } = useQuery({
-    queryKey: ['item-requests', searchTerm, selectedCategory],
-    queryFn: async () => {
-      let query = supabase
-        .from('item_requests')
-        .select(`
-          *,
-          profiles!item_requests_requester_id_fkey (
-            full_name,
-            campus_credits
-          )
-        `)
-        .eq('is_active', true)
-        .order('created_at', { ascending: false });
-
-      if (searchTerm) {
-        query = query.ilike('title', `%${searchTerm}%`);
-      }
-      
-      if (selectedCategory !== 'all') {
-        query = query.eq('category', selectedCategory);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      return data as ItemRequest[];
-    }
-  });
-
-  // Create item request mutation
-  const createRequestMutation = useMutation({
-    mutationFn: async (requestData: any) => {
-      const { error } = await supabase
-        .from('item_requests')
-        .insert([{ ...requestData, requester_id: user?.id }]);
-      
-      if (error) throw error;
+  // Mock data for item requests
+  const mockRequests: ItemRequest[] = [
+    {
+      id: '1',
+      requester_id: 'user1',
+      item_name: 'Organic Chemistry Textbook',
+      description: 'Need Morrison & Boyd for semester exam preparation',
+      category: 'textbooks',
+      max_price_per_day: 50,
+      needed_from: '2024-02-01',
+      needed_until: '2024-03-15',
+      is_fulfilled: false,
+      is_active: true,
+      created_at: '2024-01-15T10:30:00Z',
+      profiles: { full_name: 'Priya Singh' }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['item-requests'] });
-      setShowRequestForm(false);
-      setFormData({
-        title: '',
-        description: '',
-        category: '',
-        max_price_per_day: '',
-        needed_from: '',
-        needed_until: '',
-        campus_credits_bounty: '0'
-      });
+    {
+      id: '2',
+      requester_id: 'user2',
+      item_name: 'Gaming Laptop',
+      description: 'RTX 4060 or higher for game development project',
+      category: 'electronics',
+      max_price_per_day: 800,
+      needed_from: '2024-02-10',
+      needed_until: '2024-02-25',
+      is_fulfilled: false,
+      is_active: true,
+      created_at: '2024-01-14T15:45:00Z',
+      profiles: { full_name: 'Rahul Kumar' }
+    },
+    {
+      id: '3',
+      requester_id: 'user3',
+      item_name: 'DSLR Camera',
+      description: 'For college fest photography, any Canon/Nikon DSLR',
+      category: 'cameras',
+      max_price_per_day: 600,
+      needed_from: '2024-02-20',
+      needed_until: '2024-02-22',
+      is_fulfilled: false,
+      is_active: true,
+      created_at: '2024-01-13T09:15:00Z',
+      profiles: { full_name: 'Anisha Patel' }
     }
+  ];
+
+  const filteredRequests = mockRequests.filter(request => {
+    if (selectedCategory === 'all') return true;
+    return request.category === selectedCategory;
   });
 
-  const handleSubmitRequest = () => {
-    createRequestMutation.mutate({
-      title: formData.title,
-      description: formData.description,
-      category: formData.category,
-      max_price_per_day: parseFloat(formData.max_price_per_day),
-      needed_from: formData.needed_from,
-      needed_until: formData.needed_until,
-      campus_credits_bounty: parseInt(formData.campus_credits_bounty)
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Mock submission - in real app would call API
+    console.log('Creating item request:', formData);
+    setShowCreateForm(false);
+    setFormData({
+      item_name: '',
+      description: '',
+      category: 'textbooks',
+      max_price_per_day: '',
+      needed_from: '',
+      needed_until: ''
     });
   };
 
-  const categories = [
-    'textbooks', 'laptops_notebooks', 'gaming', 'electronics', 'furniture',
-    'kitchen_appliances_mini', 'sports_equipment_outdoor', 'musical_instruments'
-  ];
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'textbooks':
+        return <BookOpen className="w-4 h-4" />;
+      case 'electronics':
+        return <Laptop className="w-4 h-4" />;
+      case 'cameras':
+        return <Camera className="w-4 h-4" />;
+      case 'gaming':
+        return <Gamepad2 className="w-4 h-4" />;
+      default:
+        return <BookOpen className="w-4 h-4" />;
+    }
+  };
 
-  if (isLoading) {
-    return <div className="p-6 text-center">Loading community wishlist...</div>;
-  }
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'textbooks':
+        return 'bg-blue-100 text-blue-700';
+      case 'electronics':
+        return 'bg-purple-100 text-purple-700';
+      case 'cameras':
+        return 'bg-green-100 text-green-700';
+      case 'gaming':
+        return 'bg-orange-100 text-orange-700';
+      default:
+        return 'bg-gray-100 text-gray-700';
+    }
+  };
 
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Community Wishlist</h1>
-          <p className="text-gray-600">Request items you need - fellow students can help!</p>
+          <p className="text-gray-600">Request items you need from the community</p>
         </div>
-        <Button onClick={() => setShowRequestForm(true)} className="bg-blue-600 hover:bg-blue-700">
+        <Button onClick={() => setShowCreateForm(true)} className="bg-purple-600 hover:bg-purple-700">
           <Plus className="w-4 h-4 mr-2" />
           Request Item
         </Button>
       </div>
 
-      {/* Search and Filters */}
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <Input
-            placeholder="Search requests..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="All Categories" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
-            {categories.map((category) => (
-              <SelectItem key={category} value={category}>
-                {category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      {/* Category Filter */}
+      <div className="flex flex-wrap gap-2">
+        <Button
+          variant={selectedCategory === 'all' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setSelectedCategory('all')}
+        >
+          All Requests
+        </Button>
+        <Button
+          variant={selectedCategory === 'textbooks' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setSelectedCategory('textbooks')}
+          className="flex items-center gap-1"
+        >
+          <BookOpen className="w-3 h-3" />
+          Textbooks
+        </Button>
+        <Button
+          variant={selectedCategory === 'electronics' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setSelectedCategory('electronics')}
+          className="flex items-center gap-1"
+        >
+          <Laptop className="w-3 h-3" />
+          Electronics
+        </Button>
+        <Button
+          variant={selectedCategory === 'cameras' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setSelectedCategory('cameras')}
+          className="flex items-center gap-1"
+        >
+          <Camera className="w-3 h-3" />
+          Cameras
+        </Button>
       </div>
 
-      {/* Request Form Modal */}
-      {showRequestForm && (
-        <Card className="border-blue-200 bg-blue-50">
+      {/* Create Request Form */}
+      {showCreateForm && (
+        <Card className="border-purple-200 shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Plus className="w-5 h-5" />
-              Request New Item
-            </CardTitle>
+            <CardTitle className="text-purple-700">Create New Request</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <Input
-              placeholder="What do you need?"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            />
-            <Textarea
-              placeholder="Describe your requirements..."
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Input
-                type="number"
-                placeholder="Max price per day (₹)"
-                value={formData.max_price_per_day}
-                onChange={(e) => setFormData({ ...formData, max_price_per_day: e.target.value })}
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Input
-                type="date"
-                placeholder="Needed from"
-                value={formData.needed_from}
-                onChange={(e) => setFormData({ ...formData, needed_from: e.target.value })}
-              />
-              <Input
-                type="date"
-                placeholder="Needed until"
-                value={formData.needed_until}
-                onChange={(e) => setFormData({ ...formData, needed_until: e.target.value })}
-              />
-              <Input
-                type="number"
-                placeholder="Campus Credits Bounty"
-                value={formData.campus_credits_bounty}
-                onChange={(e) => setFormData({ ...formData, campus_credits_bounty: e.target.value })}
-              />
-            </div>
-            <div className="flex gap-2">
-              <Button onClick={handleSubmitRequest} disabled={createRequestMutation.isPending}>
-                {createRequestMutation.isPending ? 'Submitting...' : 'Submit Request'}
-              </Button>
-              <Button variant="outline" onClick={() => setShowRequestForm(false)}>
-                Cancel
-              </Button>
-            </div>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Item Name *
+                  </label>
+                  <Input
+                    value={formData.item_name}
+                    onChange={(e) => setFormData({ ...formData, item_name: e.target.value })}
+                    placeholder="e.g., MacBook Pro, Organic Chemistry Book"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Category *
+                  </label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                    required
+                  >
+                    <option value="textbooks">Textbooks</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="cameras">Cameras</option>
+                    <option value="gaming">Gaming</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Description
+                </label>
+                <Textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Provide more details about what you're looking for..."
+                  rows={3}
+                />
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Max Price/Day (₹)
+                  </label>
+                  <Input
+                    type="number"
+                    value={formData.max_price_per_day}
+                    onChange={(e) => setFormData({ ...formData, max_price_per_day: e.target.value })}
+                    placeholder="500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Needed From
+                  </label>
+                  <Input
+                    type="date"
+                    value={formData.needed_from}
+                    onChange={(e) => setFormData({ ...formData, needed_from: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Needed Until
+                  </label>
+                  <Input
+                    type="date"
+                    value={formData.needed_until}
+                    onChange={(e) => setFormData({ ...formData, needed_until: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button type="submit" className="bg-purple-600 hover:bg-purple-700">
+                  Create Request
+                </Button>
+                <Button type="button" variant="outline" onClick={() => setShowCreateForm(false)}>
+                  Cancel
+                </Button>
+              </div>
+            </form>
           </CardContent>
         </Card>
       )}
 
-      {/* Requests List */}
-      <div className="grid gap-4">
-        {requests.length === 0 ? (
-          <Card className="text-center py-12">
-            <CardContent>
-              <Heart className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-semibold text-gray-600 mb-2">No requests yet</h3>
-              <p className="text-gray-500">Be the first to request an item!</p>
-            </CardContent>
-          </Card>
+      {/* Requests Grid */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {filteredRequests.length === 0 ? (
+          <div className="col-span-full text-center py-12">
+            <Users className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-600 mb-2">No requests found</h3>
+            <p className="text-gray-500">Be the first to create a request in this category!</p>
+          </div>
         ) : (
-          requests.map((request) => (
-            <Card key={request.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start gap-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{request.title}</h3>
-                    <p className="text-gray-600 mb-3">{request.description}</p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      <Badge variant="secondary">
-                        {request.category?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                      </Badge>
-                      <Badge variant="outline" className="flex items-center gap-1">
-                        <DollarSign className="w-3 h-3" />
-                        Up to ₹{request.max_price_per_day}/day
-                      </Badge>
-                      {request.campus_credits_bounty > 0 && (
-                        <Badge variant="default" className="flex items-center gap-1">
-                          <Award className="w-3 h-3" />
-                          {request.campus_credits_bounty} Credits
-                        </Badge>
-                      )}
+          filteredRequests.map((request) => (
+            <Card key={request.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-4">
+                <div className="flex justify-between items-start">
+                  <CardTitle className="text-lg">{request.item_name}</CardTitle>
+                  <Badge className={getCategoryColor(request.category)}>
+                    <div className="flex items-center gap-1">
+                      {getCategoryIcon(request.category)}
+                      <span className="capitalize">{request.category}</span>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {request.description && (
+                  <p className="text-gray-600 text-sm">{request.description}</p>
+                )}
+
+                <div className="space-y-2">
+                  {request.max_price_per_day && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="flex items-center gap-1">
+                        <DollarSign className="w-4 h-4" />
+                        Max Budget
+                      </span>
+                      <span className="font-semibold text-green-600">₹{request.max_price_per_day}/day</span>
+                    </div>
+                  )}
+
+                  {request.needed_from && request.needed_until && (
+                    <div className="flex items-center justify-between text-sm">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
+                        Duration
+                      </span>
+                      <span>
                         {new Date(request.needed_from).toLocaleDateString()} - {new Date(request.needed_until).toLocaleDateString()}
                       </span>
-                      <span>by {request.profiles?.full_name}</span>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                      I Can Help
-                    </Button>
-                  </div>
+                  )}
                 </div>
+
+                <div className="flex items-center gap-2">
+                  <Avatar className="w-6 h-6">
+                    <AvatarFallback className="text-xs">
+                      {request.profiles.full_name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm text-gray-600">Requested by {request.profiles.full_name}</span>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button size="sm" className="flex-1 bg-purple-600 hover:bg-purple-700">
+                    <MessageCircle className="w-4 h-4 mr-1" />
+                    Respond
+                  </Button>
+                  <Button size="sm" variant="outline">
+                    <Heart className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                <p className="text-xs text-gray-500">
+                  Posted {new Date(request.created_at).toLocaleDateString()}
+                </p>
               </CardContent>
             </Card>
           ))

@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      campus_pulse_feed: {
+        Row: {
+          content_id: string | null
+          content_type: string
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          is_viewed: boolean
+          priority: number
+          title: string
+          user_id: string
+        }
+        Insert: {
+          content_id?: string | null
+          content_type: string
+          created_at?: string
+          description: string
+          id?: string
+          image_url?: string | null
+          is_viewed?: boolean
+          priority?: number
+          title: string
+          user_id: string
+        }
+        Update: {
+          content_id?: string | null
+          content_type?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          is_viewed?: boolean
+          priority?: number
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       colleges: {
         Row: {
           address: string | null
@@ -118,6 +157,88 @@ export type Database = {
           },
         ]
       }
+      group_rental_participants: {
+        Row: {
+          created_at: string
+          group_rental_id: string
+          id: string
+          participant_id: string
+          payment_status: string
+        }
+        Insert: {
+          created_at?: string
+          group_rental_id: string
+          id?: string
+          participant_id: string
+          payment_status?: string
+        }
+        Update: {
+          created_at?: string
+          group_rental_id?: string
+          id?: string
+          participant_id?: string
+          payment_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_rental_participants_group_rental_id_fkey"
+            columns: ["group_rental_id"]
+            isOneToOne: false
+            referencedRelation: "group_rentals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_rentals: {
+        Row: {
+          cost_per_person: number
+          created_at: string
+          description: string | null
+          end_date: string
+          id: string
+          item_id: string | null
+          max_participants: number
+          organizer_id: string
+          start_date: string
+          status: string
+          title: string
+        }
+        Insert: {
+          cost_per_person: number
+          created_at?: string
+          description?: string | null
+          end_date: string
+          id?: string
+          item_id?: string | null
+          max_participants: number
+          organizer_id: string
+          start_date: string
+          status?: string
+          title: string
+        }
+        Update: {
+          cost_per_person?: number
+          created_at?: string
+          description?: string | null
+          end_date?: string
+          id?: string
+          item_id?: string | null
+          max_participants?: number
+          organizer_id?: string
+          start_date?: string
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_rentals_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "rental_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       item_requests: {
         Row: {
           category: Database["public"]["Enums"]["item_category"] | null
@@ -167,6 +288,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      loyalty_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          reason: string
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          reason: string
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          reason?: string
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       messages: {
         Row: {
@@ -222,6 +370,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          campus_credits: number | null
           campus_verified: boolean | null
           college_id: string | null
           created_at: string | null
@@ -231,10 +380,13 @@ export type Database = {
           karma_score: number | null
           phone_number: string | null
           role: Database["public"]["Enums"]["user_role"]
+          successful_rentals: number | null
           trust_level: string | null
+          trust_score: number | null
           updated_at: string | null
         }
         Insert: {
+          campus_credits?: number | null
           campus_verified?: boolean | null
           college_id?: string | null
           created_at?: string | null
@@ -244,10 +396,13 @@ export type Database = {
           karma_score?: number | null
           phone_number?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          successful_rentals?: number | null
           trust_level?: string | null
+          trust_score?: number | null
           updated_at?: string | null
         }
         Update: {
+          campus_credits?: number | null
           campus_verified?: boolean | null
           college_id?: string | null
           created_at?: string | null
@@ -257,7 +412,9 @@ export type Database = {
           karma_score?: number | null
           phone_number?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          successful_rentals?: number | null
           trust_level?: string | null
+          trust_score?: number | null
           updated_at?: string | null
         }
         Relationships: [
