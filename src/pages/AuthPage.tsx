@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -113,7 +112,7 @@ const AuthPage = () => {
         title: "Welcome back, superstar! 🎉",
         description: "Ready to continue your awesome journey?"
       });
-      navigate('/');
+      navigate('/dashboard');
     }
 
     setIsLoading(false);
@@ -155,7 +154,7 @@ const AuthPage = () => {
         title: "Account Created! 🚀",
         description: "Check your email and let's get this party started!"
       });
-      navigate('/');
+      navigate('/dashboard');
     }
 
     setIsLoading(false);
@@ -306,7 +305,7 @@ const AuthPage = () => {
                         key={role.id}
                         className={`relative p-6 rounded-2xl border-3 cursor-pointer transition-all duration-500 transform hover:scale-105 ${
                           selectedRole === role.id
-                            ? `border-transparent bg-gradient-to-br ${role.bgGradient} scale-105 shadow-2xl ring-4 ring-opacity-50`
+                            ? `border-transparent bg-gradient-to-br ${role.bgGradient} scale-105 rotate-6 shadow-lg` 
                             : `border-gray-200 hover:${role.borderColor} bg-white hover:shadow-xl`
                         }`}
                         onClick={() => setSelectedRole(role.id)}

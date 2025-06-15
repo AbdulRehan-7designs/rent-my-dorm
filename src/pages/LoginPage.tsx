@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { User, Store, Shield, Mail, Lock, Eye, EyeOff, ArrowRight, GraduationCap, Sparkles, Zap, Star, Heart } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { User, Store, Shield, Mail, Lock, Eye, EyeOff, ArrowRight, GraduationCap, Sparkles, Zap, Star, Heart, Loader2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = () => {
   const [selectedRole, setSelectedRole] = useState('student');
   const [formData, setFormData] = useState({
     email: '',
@@ -16,6 +17,8 @@ const LoginPage = ({ onLogin }) => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
 
   const roles = [
     {
@@ -47,7 +50,7 @@ const LoginPage = ({ onLogin }) => {
     }
   ];
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -63,28 +66,31 @@ const LoginPage = ({ onLogin }) => {
 
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      const userData = {
-        id: Date.now(),
-        email: formData.email,
-        name: formData.email.split('@')[0],
-        role: selectedRole,
-        college: selectedRole === 'admin' ? 'RentMyDorm Admin' : 'IIT Delhi',
-        points: Math.floor(Math.random() * 1000),
-        level: Math.floor(Math.random() * 5) + 1,
-        badges: ['Verified User'],
-        joinedDate: new Date().toISOString()
-      };
-
-      onLogin(userData);
-      setIsLoading(false);
+    try {
+      const { error } = await signIn(formData.email, formData.password);
       
+      if (error) {
+        toast({
+          title: "Login Failed 😔",
+          description: error.message || "Invalid credentials. Please check your email and password.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Welcome back, superstar! 🎉✨",
+          description: `Successfully logged in! Let's get this party started!`,
+        });
+        navigate('/dashboard');
+      }
+    } catch (err) {
       toast({
-        title: "Welcome back, superstar! 🎉✨",
-        description: `Successfully logged in as ${selectedRole}. Let's get this party started!`,
+        title: "Login Error 😵",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive"
       });
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const selectedRoleData = roles.find(role => role.id === selectedRole) || roles[0];
@@ -135,7 +141,7 @@ const LoginPage = ({ onLogin }) => {
                 {roles.map((role) => (
                   <div
                     key={role.id}
-                    className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-500 transform hover:scale-105 ${
+                    className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-500 transform hover:scale-105 ${
                       selectedRole === role.id
                         ? `border-transparent bg-gradient-to-r ${role.bgGradient} scale-105 shadow-lg ring-4 ring-opacity-50`
                         : 'border-gray-200 hover:border-orange-300 hover:bg-orange-50'
@@ -225,7 +231,7 @@ const LoginPage = ({ onLogin }) => {
             >
               {isLoading ? (
                 <div className="flex items-center">
-                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
+                  <Loader2 className="w-6 h-6 animate-spin mr-3" />
                   <span>Signing you in...</span>
                 </div>
               ) : (
