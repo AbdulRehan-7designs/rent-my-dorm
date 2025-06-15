@@ -40,6 +40,7 @@ const NavBar = () => {
     navigate('/');
   };
 
+  // Main navigation items
   const navItems = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/browse', label: 'Browse', icon: ShoppingCart },
@@ -51,6 +52,11 @@ const NavBar = () => {
       { href: '/campus-credits', label: 'Credits', icon: Award },
       { href: '/sustainability', label: 'Sustainability', icon: Leaf }
     ] : [])
+  ];
+
+  const profileNavItems = [
+    { href: '/profile', label: 'Profile', icon: User },
+    { href: '/settings', label: 'Settings', icon: Settings }
   ];
 
   const isActive = (path: string) => {
@@ -116,7 +122,6 @@ const NavBar = () => {
                     </Link>
                   ))}
                 </div>
-
                 {/* Notifications */}
                 <Button variant="ghost" size="sm" className="relative">
                   <Bell className="w-5 h-5" />
@@ -126,7 +131,6 @@ const NavBar = () => {
                     </Badge>
                   )}
                 </Button>
-
                 {/* User Menu */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -150,8 +154,7 @@ const NavBar = () => {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    
-                    {/* Mobile Nav Items */}
+
                     <div className="md:hidden">
                       {navItems.slice(3).map((item) => (
                         <DropdownMenuItem key={item.href} asChild>
@@ -164,18 +167,15 @@ const NavBar = () => {
                       <DropdownMenuSeparator />
                     </div>
 
-                    <DropdownMenuItem asChild>
-                      <Link to="/profile" className="flex items-center">
-                        <User className="w-4 h-4 mr-2" />
-                        <span>Profile</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/settings" className="flex items-center">
-                        <Settings className="w-4 h-4 mr-2" />
-                        <span>Settings</span>
-                      </Link>
-                    </DropdownMenuItem>
+                    {/* Profile & Settings always visible */}
+                    {profileNavItems.map((item) => (
+                      <DropdownMenuItem key={item.href} asChild>
+                        <Link to={item.href} className="flex items-center">
+                          <item.icon className="w-4 h-4 mr-2" />
+                          <span>{item.label}</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
                       onClick={handleSignOut}
@@ -209,3 +209,4 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
