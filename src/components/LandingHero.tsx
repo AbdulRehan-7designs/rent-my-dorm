@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,15 +91,6 @@ export const LandingHero = () => {
               Get Started →
             </Button>
           </Link>
-          
-          <Button 
-            variant="outline" 
-            size="lg" 
-            className="border-2 border-gradient-to-r from-orange-300 to-pink-300 text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-pink-500 px-10 py-4 text-lg flex items-center gap-3 transition-all duration-300 hover:shadow-lg rounded-full bg-white/10 backdrop-blur-sm"
-          >
-            <Play className="w-5 h-5" />
-            Watch Demo
-          </Button>
         </div>
 
         {/* Enhanced Search Bar */}
