@@ -12,6 +12,8 @@ import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/AuthPage";
 import BrowseItemsPage from "./pages/BrowseItemsPage";
 import DashboardPage from "./pages/DashboardPage";
+import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NavBar from "./components/NavBar";
 import CommunityWishlist from "./components/CommunityWishlist";
@@ -79,6 +81,22 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <SustainabilityPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/profile" 
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/settings" 
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
             </ProtectedRoute>
           } 
         />
