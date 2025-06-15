@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -44,19 +43,21 @@ const NavBar = () => {
   const navItems = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/browse', label: 'Browse', icon: ShoppingCart },
-    ...(user ? [
-      { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-      { href: '/community-wishlist', label: 'Community', icon: Heart },
-      { href: '/squad-up', label: 'Squad Up', icon: Users },
-      { href: '/campus-pulse', label: 'Campus Pulse', icon: TrendingUp },
-      { href: '/campus-credits', label: 'Credits', icon: Award },
-      { href: '/sustainability', label: 'Sustainability', icon: Leaf }
-    ] : [])
+    ...(user
+      ? [
+          { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+          { href: '/community-wishlist', label: 'Community', icon: Heart },
+          { href: '/squad-up', label: 'Squad Up', icon: Users },
+          { href: '/campus-pulse', label: 'Campus Pulse', icon: TrendingUp },
+          { href: '/campus-credits', label: 'Credits', icon: Award },
+          { href: '/sustainability', label: 'Sustainability', icon: Leaf },
+        ]
+      : []),
   ];
 
   const profileNavItems = [
     { href: '/profile', label: 'Profile', icon: User },
-    { href: '/settings', label: 'Settings', icon: Settings }
+    { href: '/settings', label: 'Settings', icon: Settings },
   ];
 
   const isActive = (path: string) => {
@@ -74,54 +75,71 @@ const NavBar = () => {
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">R</span>
             </div>
-            <span className="text-xl font-bold text-gray-900 hidden sm:block">
-              RentMyDorm
-            </span>
+            <span className="text-xl font-bold text-gray-900 hidden sm:block">RentMyDorm</span>
           </Link>
 
-          {/* Navigation Links - Desktop */}
-          <div className="hidden md:flex items-center space-x-1">
-            {navItems.slice(0, 3).map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                  isActive(item.href)
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-                }`}
-              >
-                <div className="flex items-center space-x-1">
-                  <item.icon className="w-4 h-4" />
-                  <span>{item.label}</span>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {/* Navigation Links - Desktop & Tablet */}
+          {user ? (
+            <div className="hidden md:flex items-center space-x-1">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                    isActive(item.href)
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                  }`}
+                >
+                  <div className="flex items-center space-x-1">
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.label}</span>
+                  </div>
+                </Link>
+              ))}
+              {/* Profile and Settings always present for user */}
+              {profileNavItems.map((item) => (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                    isActive(item.href)
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                  }`}
+                >
+                  <div className="flex items-center space-x-1">
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.label}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="hidden md:flex items-center space-x-1">
+              {navItems.slice(0, 2).map((item) => (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                    isActive(item.href)
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                  }`}
+                >
+                  <div className="flex items-center space-x-1">
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.label}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
 
           {/* User Actions */}
           <div className="flex items-center space-x-3">
             {user ? (
               <>
-                {/* More Nav Items for Logged-in Users */}
-                <div className="hidden lg:flex items-center space-x-1">
-                  {navItems.slice(3).map((item) => (
-                    <Link
-                      key={item.href}
-                      to={item.href}
-                      className={`px-2 py-1 rounded-md text-xs font-medium transition-all duration-200 ${
-                        isActive(item.href)
-                          ? 'bg-blue-100 text-blue-700'
-                          : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-1">
-                        <item.icon className="w-3 h-3" />
-                        <span className="hidden xl:block">{item.label}</span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
                 {/* Notifications */}
                 <Button variant="ghost" size="sm" className="relative">
                   <Bell className="w-5 h-5" />
@@ -155,8 +173,17 @@ const NavBar = () => {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
 
+                    {/* All nav items (for mobile users) */}
                     <div className="md:hidden">
-                      {navItems.slice(3).map((item) => (
+                      {navItems.map((item) => (
+                        <DropdownMenuItem key={item.href} asChild>
+                          <Link to={item.href} className="flex items-center">
+                            <item.icon className="w-4 h-4 mr-2" />
+                            <span>{item.label}</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                      {profileNavItems.map((item) => (
                         <DropdownMenuItem key={item.href} asChild>
                           <Link to={item.href} className="flex items-center">
                             <item.icon className="w-4 h-4 mr-2" />
@@ -167,7 +194,7 @@ const NavBar = () => {
                       <DropdownMenuSeparator />
                     </div>
 
-                    {/* Profile & Settings always visible */}
+                    {/* Profile & Settings for desktop as fallback */}
                     {profileNavItems.map((item) => (
                       <DropdownMenuItem key={item.href} asChild>
                         <Link to={item.href} className="flex items-center">
@@ -177,7 +204,7 @@ const NavBar = () => {
                       </DropdownMenuItem>
                     ))}
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       onClick={handleSignOut}
                       className="text-red-600 focus:text-red-600"
                     >
@@ -209,4 +236,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-
