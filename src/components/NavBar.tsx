@@ -29,14 +29,23 @@ import {
   HelpCircle,
   Shield,
   Plus,
-  Filter,
   MapPin,
   GraduationCap
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
+// Define the navigation item type with optional roles property
+interface NavItem {
+  href: string;
+  label: string;
+  icon: any;
+  auth: 'all' | 'auth';
+  category: string;
+  roles?: string[];
+}
+
 // Basic navigation for all users (guests and authenticated)
-const PUBLIC_NAV_ITEMS = [
+const PUBLIC_NAV_ITEMS: NavItem[] = [
   { href: '/', label: 'Home', icon: Home, auth: 'all', category: 'main' },
   { href: '/browse', label: 'Browse Items', icon: ShoppingCart, auth: 'all', category: 'main' },
   { href: '/help', label: 'Help & Support', icon: HelpCircle, auth: 'all', category: 'support' },
@@ -44,12 +53,12 @@ const PUBLIC_NAV_ITEMS = [
 ];
 
 // Navigation items for authenticated users
-const AUTHENTICATED_NAV_ITEMS = [
+const AUTHENTICATED_NAV_ITEMS: NavItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, auth: 'auth', category: 'main', roles: ['student', 'vendor', 'admin'] },
 ];
 
 // Role-specific navigation items
-const STUDENT_NAV_ITEMS = [
+const STUDENT_NAV_ITEMS: NavItem[] = [
   { href: '/community-wishlist', label: 'Wishlist', icon: Heart, auth: 'auth', category: 'community', roles: ['student'] },
   { href: '/squad-up', label: 'Squad Up', icon: Users, auth: 'auth', category: 'community', roles: ['student'] },
   { href: '/campus-pulse', label: 'Campus Pulse', icon: TrendingUp, auth: 'auth', category: 'community', roles: ['student'] },
@@ -61,21 +70,21 @@ const STUDENT_NAV_ITEMS = [
   { href: '/sustainability', label: 'Green Impact', icon: Leaf, auth: 'auth', category: 'rewards', roles: ['student'] },
 ];
 
-const VENDOR_NAV_ITEMS = [
+const VENDOR_NAV_ITEMS: NavItem[] = [
   { href: '/my-listings', label: 'My Listings', icon: Package, auth: 'auth', category: 'business', roles: ['vendor'] },
   { href: '/orders', label: 'Orders', icon: ShoppingCart, auth: 'auth', category: 'business', roles: ['vendor'] },
   { href: '/analytics', label: 'Analytics', icon: TrendingUp, auth: 'auth', category: 'business', roles: ['vendor'] },
   { href: '/messages', label: 'Messages', icon: MessageSquare, auth: 'auth', category: 'business', roles: ['vendor'] },
 ];
 
-const ADMIN_NAV_ITEMS = [
+const ADMIN_NAV_ITEMS: NavItem[] = [
   { href: '/admin-dashboard', label: 'Admin Panel', icon: LayoutDashboard, auth: 'auth', category: 'admin', roles: ['admin'] },
   { href: '/user-management', label: 'Users', icon: Users, auth: 'auth', category: 'admin', roles: ['admin'] },
   { href: '/content-moderation', label: 'Moderation', icon: Shield, auth: 'auth', category: 'admin', roles: ['admin'] },
 ];
 
 // Account navigation for authenticated users
-const ACCOUNT_NAV_ITEMS = [
+const ACCOUNT_NAV_ITEMS: NavItem[] = [
   { href: '/profile', label: 'Profile', icon: User, auth: 'auth', category: 'account', roles: ['student', 'vendor', 'admin'] },
   { href: '/settings', label: 'Settings', icon: Settings, auth: 'auth', category: 'account', roles: ['student', 'vendor', 'admin'] },
 ];
@@ -165,9 +174,34 @@ const NavBar = () => {
               </div>
             </Link>
 
-            {/* Desktop Navigation - Main Items */}
+            {/* Desktop Navigation - Only show Home and Browse for everyone, role-specific after login */}
             <div className="hidden lg:flex items-center gap-1">
-              {getNavItemsByCategory('main').map((item) => (
+              {/* Always show Home and Browse */}
+              <Link
+                to="/"
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  isActive(location, '/')
+                    ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
+                    : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
+                }`}
+              >
+                <Home className="w-4 h-4" />
+                <span>Home</span>
+              </Link>
+              <Link
+                to="/browse"
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  isActive(location, '/browse')
+                    ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
+                    : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
+                }`}
+              >
+                <ShoppingCart className="w-4 h-4" />
+                <span>Browse Items</span>
+              </Link>
+              
+              {/* Show role-specific navigation only after login */}
+              {user && getNavItemsByCategory('main').filter(item => item.href !== '/' && item.href !== '/browse').map((item) => (
                 <Link
                   key={item.href}
                   to={item.href}
@@ -183,7 +217,7 @@ const NavBar = () => {
               ))}
             </div>
 
-            {/* Search Bar - Desktop */}
+            {/* Search Bar - Desktop Only */}
             <div className="hidden lg:flex flex-1 max-w-md mx-6">
               <form onSubmit={handleSearch} className="w-full relative">
                 <div className="relative flex items-center">
@@ -320,7 +354,7 @@ const NavBar = () => {
             <div className="lg:hidden absolute left-0 top-16 w-full bg-white/98 border-b z-40 shadow-xl animate-fade-in backdrop-blur-sm">
               <div className="flex flex-col px-5 py-6 gap-6 max-h-[80vh] overflow-y-auto">
                 
-                {/* Mobile Search */}
+                {/* Mobile Search - Single search bar for mobile */}
                 <form onSubmit={handleSearch} className="relative">
                   <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                   <Input
@@ -343,14 +377,62 @@ const NavBar = () => {
                   </Button>
                 )}
 
-                {/* Navigation Categories */}
-                {user ? (
+                {/* Always show Home and Browse in mobile */}
+                <div>
+                  <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Main</h3>
+                  <div className="space-y-1">
+                    <Link
+                      to="/"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
+                        isActive(location, '/')
+                          ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
+                          : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
+                      }`}
+                      onClick={handleNavClick}
+                    >
+                      <Home className="w-5 h-5" />
+                      <span>Home</span>
+                    </Link>
+                    <Link
+                      to="/browse"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
+                        isActive(location, '/browse')
+                          ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
+                          : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
+                      }`}
+                      onClick={handleNavClick}
+                    >
+                      <ShoppingCart className="w-5 h-5" />
+                      <span>Browse Items</span>
+                    </Link>
+                    
+                    {/* Show role-specific main navigation only after login */}
+                    {user && getNavItemsByCategory('main').filter(item => item.href !== '/' && item.href !== '/browse').map((item) => (
+                      <Link
+                        key={item.href}
+                        to={item.href}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
+                          isActive(location, item.href)
+                            ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
+                            : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
+                        }`}
+                        onClick={handleNavClick}
+                      >
+                        <item.icon className="w-5 h-5" />
+                        <span>{item.label}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Role-specific sections - only show after login */}
+                {user && userRole === 'student' && (
                   <>
-                    {/* Main Navigation */}
+                    {/* Community */}
                     <div>
-                      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Main</h3>
+                      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Community</h3>
                       <div className="space-y-1">
-                        {getNavItemsByCategory('main').map((item) => (
+                        {getNavItemsByCategory('community').map((item) => (
                           <Link
                             key={item.href}
                             to={item.href}
@@ -368,128 +450,33 @@ const NavBar = () => {
                       </div>
                     </div>
 
-                    {/* Role-specific sections */}
-                    {userRole === 'student' && (
-                      <>
-                        {/* Community */}
-                        <div>
-                          <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Community</h3>
-                          <div className="space-y-1">
-                            {getNavItemsByCategory('community').map((item) => (
-                              <Link
-                                key={item.href}
-                                to={item.href}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
-                                  isActive(location, item.href)
-                                    ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
-                                    : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
-                                }`}
-                                onClick={handleNavClick}
-                              >
-                                <item.icon className="w-5 h-5" />
-                                <span>{item.label}</span>
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Rentals */}
-                        <div>
-                          <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">My Rentals</h3>
-                          <div className="space-y-1">
-                            {getNavItemsByCategory('rentals').map((item) => (
-                              <Link
-                                key={item.href}
-                                to={item.href}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
-                                  isActive(location, item.href)
-                                    ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
-                                    : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
-                                }`}
-                                onClick={handleNavClick}
-                              >
-                                <item.icon className="w-5 h-5" />
-                                <span>{item.label}</span>
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Rewards */}
-                        <div>
-                          <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Rewards</h3>
-                          <div className="space-y-1">
-                            {getNavItemsByCategory('rewards').map((item) => (
-                              <Link
-                                key={item.href}
-                                to={item.href}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
-                                  isActive(location, item.href)
-                                    ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
-                                    : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
-                                }`}
-                                onClick={handleNavClick}
-                              >
-                                <item.icon className="w-5 h-5" />
-                                <span>{item.label}</span>
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      </>
-                    )}
-
-                    {userRole === 'vendor' && (
-                      <div>
-                        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Business</h3>
-                        <div className="space-y-1">
-                          {getNavItemsByCategory('business').map((item) => (
-                            <Link
-                              key={item.href}
-                              to={item.href}
-                              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
-                                isActive(location, item.href)
-                                  ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
-                                  : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
-                              }`}
-                              onClick={handleNavClick}
-                            >
-                              <item.icon className="w-5 h-5" />
-                              <span>{item.label}</span>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {userRole === 'admin' && (
-                      <div>
-                        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Administration</h3>
-                        <div className="space-y-1">
-                          {getNavItemsByCategory('admin').map((item) => (
-                            <Link
-                              key={item.href}
-                              to={item.href}
-                              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
-                                isActive(location, item.href)
-                                  ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
-                                  : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
-                              }`}
-                              onClick={handleNavClick}
-                            >
-                              <item.icon className="w-5 h-5" />
-                              <span>{item.label}</span>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Account */}
+                    {/* Rentals */}
                     <div>
-                      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Account</h3>
+                      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">My Rentals</h3>
                       <div className="space-y-1">
-                        {getNavItemsByCategory('account').concat(getNavItemsByCategory('support')).map((item) => (
+                        {getNavItemsByCategory('rentals').map((item) => (
+                          <Link
+                            key={item.href}
+                            to={item.href}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
+                              isActive(location, item.href)
+                                ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
+                                : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
+                            }`}
+                            onClick={handleNavClick}
+                          >
+                            <item.icon className="w-5 h-5" />
+                            <span>{item.label}</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Rewards */}
+                    <div>
+                      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Rewards</h3>
+                      <div className="space-y-1">
+                        {getNavItemsByCategory('rewards').map((item) => (
                           <Link
                             key={item.href}
                             to={item.href}
@@ -507,24 +494,75 @@ const NavBar = () => {
                       </div>
                     </div>
                   </>
-                ) : (
-                  /* Guest Navigation */
-                  <div className="space-y-1">
-                    {getNavItemsByCategory('main').concat(getNavItemsByCategory('support')).map((item) => (
-                      <Link
-                        key={item.href}
-                        to={item.href}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
-                          isActive(location, item.href)
-                            ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
-                            : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
-                        }`}
-                        onClick={handleNavClick}
-                      >
-                        <item.icon className="w-5 h-5" />
-                        <span>{item.label}</span>
-                      </Link>
-                    ))}
+                )}
+
+                {user && userRole === 'vendor' && (
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Business</h3>
+                    <div className="space-y-1">
+                      {getNavItemsByCategory('business').map((item) => (
+                        <Link
+                          key={item.href}
+                          to={item.href}
+                          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
+                            isActive(location, item.href)
+                              ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
+                              : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
+                          }`}
+                          onClick={handleNavClick}
+                        >
+                          <item.icon className="w-5 h-5" />
+                          <span>{item.label}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {user && userRole === 'admin' && (
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Administration</h3>
+                    <div className="space-y-1">
+                      {getNavItemsByCategory('admin').map((item) => (
+                        <Link
+                          key={item.href}
+                          to={item.href}
+                          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
+                            isActive(location, item.href)
+                              ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
+                              : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
+                          }`}
+                          onClick={handleNavClick}
+                        >
+                          <item.icon className="w-5 h-5" />
+                          <span>{item.label}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Account - show only if user is logged in */}
+                {user && (
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Account</h3>
+                    <div className="space-y-1">
+                      {getNavItemsByCategory('account').concat(getNavItemsByCategory('support')).map((item) => (
+                        <Link
+                          key={item.href}
+                          to={item.href}
+                          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
+                            isActive(location, item.href)
+                              ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-pink-700 shadow-md'
+                              : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
+                          }`}
+                          onClick={handleNavClick}
+                        >
+                          <item.icon className="w-5 h-5" />
+                          <span>{item.label}</span>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
                 
