@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { User, Store, Shield, Mail, Lock, Eye, EyeOff, ArrowRight, GraduationCap, UserCircle, Sparkles, Zap, Star, Heart, Rocket } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { User, Store, Shield, Mail, Lock, Eye, EyeOff, ArrowRight, GraduationCap, UserCircle, Sparkles, Zap, Star, Heart, Rocket, Loader2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
-const SignupPage = ({ onLogin }) => {
+const SignupPage = () => {
   const [selectedRole, setSelectedRole] = useState('student');
   const [formData, setFormData] = useState({
     name: '',
@@ -20,6 +21,8 @@ const SignupPage = ({ onLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
 
   const roles = [
     {
@@ -54,7 +57,7 @@ const SignupPage = ({ onLogin }) => {
     }
   ];
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -88,28 +91,31 @@ const SignupPage = ({ onLogin }) => {
 
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      const userData = {
-        id: Date.now(),
-        email: formData.email,
-        name: formData.name,
-        role: selectedRole,
-        college: formData.college || (selectedRole === 'admin' ? 'RentMyDorm Admin' : 'IIT Delhi'),
-        points: 0,
-        level: 1,
-        badges: ['New Member'],
-        joinedDate: new Date().toISOString()
-      };
-
-      onLogin(userData);
-      setIsLoading(false);
+    try {
+      const { error } = await signUp(formData.email, formData.password, formData.name);
       
+      if (error) {
+        toast({
+          title: "Sign Up Failed 😓",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Account Created! 🎉🚀",
+          description: `Welcome to RentMyDorm! Let's start this amazing journey!`,
+        });
+        navigate('/dashboard');
+      }
+    } catch (err) {
       toast({
-        title: "Account Created! 🎉🚀",
-        description: `Welcome to RentMyDorm as ${selectedRole}! Let's start this amazing journey!`,
+        title: "Sign Up Error 😵",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive"
       });
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const selectedRoleData = roles.find(role => role.id === selectedRole) || roles[0];
@@ -319,7 +325,7 @@ const SignupPage = ({ onLogin }) => {
             >
               {isLoading ? (
                 <div className="flex items-center">
-                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
+                  <Loader2 className="w-6 h-6 animate-spin mr-3" />
                   <span>Creating your awesome account...</span>
                 </div>
               ) : (
