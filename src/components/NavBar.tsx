@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -39,8 +38,11 @@ const MAIN_NAV_ITEMS = [
   { href: '/squad-up', label: 'Squad Up', icon: Users, auth: 'auth' },
   { href: '/campus-pulse', label: 'Campus Pulse', icon: TrendingUp, auth: 'auth' },
   { href: '/campus-credits', label: 'Campus Credits', icon: Award, auth: 'auth' },
-  { href: '/sustainability', label: 'Sustainability', icon: Leaf, auth: 'auth' }
+  { href: '/sustainability', label: 'Sustainability', icon: Leaf, auth: 'auth' },
+  { href: '/profile', label: 'Profile', icon: User, auth: 'auth' },
+  { href: '/settings', label: 'Settings', icon: Settings, auth: 'auth' },
 ];
+
 const EXTRA_NAV_ITEMS = [
   { href: '/profile', label: 'Profile', icon: User, auth: 'auth' },
   { href: '/settings', label: 'Settings', icon: Settings, auth: 'auth' },
@@ -59,12 +61,10 @@ const NavBar = () => {
   const [notifications] = useState(3); // Mock notification count
   const [mobileMenu, setMobileMenu] = useState(false);
 
-  // All always-visible navigation links, filtered by auth state
+  // Filter links for visibility
   const visibleMainNav = MAIN_NAV_ITEMS.filter(item =>
     item.auth === 'all' || (user && item.auth === 'auth')
   );
-  // For authenticated users, display profile/settings as full links
-  const visibleExtraNav = user ? EXTRA_NAV_ITEMS : [];
 
   const handleSignOut = async () => {
     await signOut();
@@ -87,9 +87,9 @@ const NavBar = () => {
             <span className="text-2xl font-bold text-gray-900 hidden sm:block tracking-tight">RentMyDorm</span>
           </Link>
 
-          {/* Central navigation links (always visible) */}
+          {/* Central navigation: Show all relevant links */}
           <div className="hidden lg:flex flex-1 items-center justify-center gap-1">
-            {[...visibleMainNav, ...visibleExtraNav].map((item) => (
+            {visibleMainNav.map((item) => (
               <Link
                 key={item.href}
                 to={item.href}
@@ -119,47 +119,20 @@ const NavBar = () => {
                     </Badge>
                   )}
                 </Button>
-                {/* User dropdown avatar */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
-                      <Avatar className="h-10 w-10">
-                        <AvatarFallback className="bg-gradient-to-r from-orange-500 to-pink-500 text-white">
-                          {profile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
-                        </AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-52 z-[999]" align="end" forceMount>
-                    <DropdownMenuLabel className="font-normal">
-                      <div className="flex flex-col space-y-1">
-                        <p className="text-base font-medium leading-none">
-                          {profile?.full_name || 'User'}
-                        </p>
-                        <p className="text-xs leading-none text-muted-foreground">
-                          {user.email}
-                        </p>
-                      </div>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {EXTRA_NAV_ITEMS.map((item) => (
-                      <DropdownMenuItem key={item.href} asChild>
-                        <Link to={item.href}>
-                          <item.icon className="w-4 h-4 mr-2" />
-                          <span>{item.label}</span>
-                        </Link>
-                      </DropdownMenuItem>
-                    ))}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={handleSignOut}
-                      className="text-red-600 focus:text-red-600"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      <span>Sign out</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                {/* Avatar and sign out button (no dropdown, sign out directly here) */}
+                <Button
+                  variant="ghost"
+                  className="relative h-10 w-10 rounded-full p-0"
+                  onClick={handleSignOut}
+                  title="Sign out"
+                >
+                  <Avatar className="h-10 w-10">
+                    <AvatarFallback className="bg-gradient-to-r from-orange-500 to-pink-500 text-white">
+                      {profile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="sr-only">Sign out</span>
+                </Button>
               </>
             ) : (
               <>
@@ -177,7 +150,7 @@ const NavBar = () => {
             )}
           </div>
 
-          {/* Hamburger menu (visible on mobile/tablet) */}
+          {/* Hamburger menu (mobile/tablet) */}
           <div className="lg:hidden flex items-center">
             <Button
               variant="ghost"
@@ -191,11 +164,11 @@ const NavBar = () => {
           </div>
         </div>
 
-        {/* Mobile Drawer: all nav items always visible */}
+        {/* Mobile Drawer: show all main links always */}
         {mobileMenu && (
           <div className="lg:hidden absolute left-0 top-16 w-full bg-white/95 border-b z-40 shadow animate-fade-in">
             <div className="flex flex-col px-5 py-4 gap-1">
-              {[...visibleMainNav, ...visibleExtraNav].map((item) => (
+              {visibleMainNav.map((item) => (
                 <Link
                   key={item.href}
                   to={item.href}
@@ -211,7 +184,7 @@ const NavBar = () => {
                   <span>{item.label}</span>
                 </Link>
               ))}
-              {/* User actions */}
+              {/* Mobile user actions */}
               {user ? (
                 <Button
                   variant="outline"
