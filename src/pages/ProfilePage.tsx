@@ -71,10 +71,10 @@ const ProfilePage = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Campus</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">College</label>
                     <div className="p-3 bg-gray-50 rounded-lg flex items-center">
                       <MapPin className="w-4 h-4 mr-2 text-gray-500" />
-                      {profile?.campus || 'Not specified'}
+                      {profile?.college_id || 'Not specified'}
                     </div>
                   </div>
                 </div>
