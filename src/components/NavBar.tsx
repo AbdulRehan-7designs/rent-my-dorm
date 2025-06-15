@@ -30,21 +30,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-// Navigation items for all users
-const ALL_NAV_ITEMS = [
-  { href: '/', label: 'Home', icon: Home, showFor: 'all' },
-  { href: '/browse', label: 'Browse', icon: ShoppingCart, showFor: 'all' },
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, showFor: 'auth' },
-  { href: '/community-wishlist', label: 'Community Wishlist', icon: Heart, showFor: 'auth' },
-  { href: '/squad-up', label: 'Squad Up', icon: Users, showFor: 'auth' },
-  { href: '/campus-pulse', label: 'Campus Pulse', icon: TrendingUp, showFor: 'auth' },
-  { href: '/campus-credits', label: 'Campus Credits', icon: Award, showFor: 'auth' },
-  { href: '/sustainability', label: 'Sustainability', icon: Leaf, showFor: 'auth' }
+// Main navigation entries
+const MAIN_NAV_ITEMS = [
+  { href: '/', label: 'Home', icon: Home, auth: 'all' },
+  { href: '/browse', label: 'Browse', icon: ShoppingCart, auth: 'all' },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, auth: 'auth' },
+  { href: '/community-wishlist', label: 'Community Wishlist', icon: Heart, auth: 'auth' },
+  { href: '/squad-up', label: 'Squad Up', icon: Users, auth: 'auth' },
+  { href: '/campus-pulse', label: 'Campus Pulse', icon: TrendingUp, auth: 'auth' },
+  { href: '/campus-credits', label: 'Campus Credits', icon: Award, auth: 'auth' },
+  { href: '/sustainability', label: 'Sustainability', icon: Leaf, auth: 'auth' }
 ];
-
-const PROFILE_NAV_ITEMS = [
-  { href: '/profile', label: 'Profile', icon: User },
-  { href: '/settings', label: 'Settings', icon: Settings },
+const EXTRA_NAV_ITEMS = [
+  { href: '/profile', label: 'Profile', icon: User, auth: 'auth' },
+  { href: '/settings', label: 'Settings', icon: Settings, auth: 'auth' },
 ];
 
 const isActive = (location, path) => {
@@ -60,13 +59,12 @@ const NavBar = () => {
   const [notifications] = useState(3); // Mock notification count
   const [mobileMenu, setMobileMenu] = useState(false);
 
-  // Filter navigation items based on auth
-  const visibleNavItems = ALL_NAV_ITEMS.filter((item) =>
-    item.showFor === 'all' || (user && item.showFor === 'auth')
+  // All always-visible navigation links, filtered by auth state
+  const visibleMainNav = MAIN_NAV_ITEMS.filter(item =>
+    item.auth === 'all' || (user && item.auth === 'auth')
   );
-
-  // Always show profile/settings for authed users
-  const visibleProfileItems = user ? PROFILE_NAV_ITEMS : [];
+  // For authenticated users, display profile/settings as full links
+  const visibleExtraNav = user ? EXTRA_NAV_ITEMS : [];
 
   const handleSignOut = async () => {
     await signOut();
@@ -74,87 +72,68 @@ const NavBar = () => {
     setMobileMenu(false);
   };
 
-  // Close mobile menu on nav
+  // Closes hamburger menu after navigating on mobile
   const handleNavClick = () => setMobileMenu(false);
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+    <nav className="sticky top-0 z-50 w-full border-b bg-white/90 shadow-md backdrop-blur transition-all duration-200">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">R</span>
+          {/* Logo and Brand */}
+          <Link to="/" className="flex items-center gap-2 mr-2 hover:opacity-90 transition-opacity">
+            <div className="w-9 h-9 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow border border-blue-200/30">
+              <span className="text-white font-bold text-lg">R</span>
             </div>
-            <span className="text-xl font-bold text-gray-900 hidden sm:block">RentMyDorm</span>
+            <span className="text-2xl font-bold text-gray-900 hidden sm:block tracking-tight">RentMyDorm</span>
           </Link>
 
-          {/* Desktop navigation (large screens) */}
-          <div className="hidden md:flex flex-1 items-center justify-center">
-            <div className="flex items-center gap-1">
-              {visibleNavItems.map((item) => (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={`flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200
-                    ${
-                      isActive(location, item.href)
-                        ? 'bg-gradient-to-tr from-blue-100 to-purple-100 text-blue-700 shadow-sm'
-                        : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-                    }
-                  `}
-                >
-                  <item.icon className="w-4 h-4 mr-1" />
-                  <span className="hidden sm:inline">{item.label}</span>
-                </Link>
-              ))}
-              {visibleProfileItems.map((item) => (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={`flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200
-                    ${
-                      isActive(location, item.href)
-                        ? 'bg-gradient-to-tr from-blue-100 to-purple-100 text-blue-700 shadow-sm'
-                        : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-                    }
-                  `}
-                >
-                  <item.icon className="w-4 h-4 mr-1" />
-                  <span className="hidden sm:inline">{item.label}</span>
-                </Link>
-              ))}
-            </div>
+          {/* Central navigation links (always visible) */}
+          <div className="hidden lg:flex flex-1 items-center justify-center gap-1">
+            {[...visibleMainNav, ...visibleExtraNav].map((item) => (
+              <Link
+                key={item.href}
+                to={item.href}
+                className={`
+                  flex items-center gap-1 px-3 py-2 rounded-md text-base font-semibold transition-all duration-150
+                  ${isActive(location, item.href)
+                    ? 'bg-gradient-to-tr from-orange-100 to-pink-100 text-pink-700 shadow'
+                    : 'text-gray-700 hover:bg-pink-50 hover:text-pink-600'}
+                `}
+              >
+                <item.icon className="w-5 h-5 mr-1" />
+                <span>{item.label}</span>
+              </Link>
+            ))}
           </div>
 
-          {/* Desktop user actions */}
-          <div className="hidden md:flex items-center space-x-3">
+          {/* Desktop right actions */}
+          <div className="hidden lg:flex items-center gap-4 ml-3">
             {user ? (
               <>
-                {/* Notifications */}
-                <Button variant="ghost" size="sm" className="relative">
+                {/* Notification bell */}
+                <Button variant="ghost" size="icon" className="relative hover:bg-orange-100" aria-label="Notifications">
                   <Bell className="w-5 h-5" />
                   {notifications > 0 && (
-                    <Badge className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center p-0 text-xs bg-red-500">
+                    <Badge className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center p-0 text-xs bg-red-500 text-white">
                       {notifications}
                     </Badge>
                   )}
                 </Button>
-                {/* User Avatar/Dropdown */}
+                {/* User dropdown avatar */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
-                      <Avatar className="h-9 w-9">
-                        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+                    <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
+                      <Avatar className="h-10 w-10">
+                        <AvatarFallback className="bg-gradient-to-r from-orange-500 to-pink-500 text-white">
                           {profile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuContent className="w-52 z-[999]" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">
+                        <p className="text-base font-medium leading-none">
                           {profile?.full_name || 'User'}
                         </p>
                         <p className="text-xs leading-none text-muted-foreground">
@@ -163,7 +142,7 @@ const NavBar = () => {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {PROFILE_NAV_ITEMS.map((item) => (
+                    {EXTRA_NAV_ITEMS.map((item) => (
                       <DropdownMenuItem key={item.href} asChild>
                         <Link to={item.href}>
                           <item.icon className="w-4 h-4 mr-2" />
@@ -185,12 +164,12 @@ const NavBar = () => {
             ) : (
               <>
                 <Link to="/auth">
-                  <Button variant="ghost" className="text-gray-600 hover:text-blue-600">
+                  <Button variant="ghost" className="text-gray-700 hover:text-orange-600 hover:bg-orange-50">
                     Sign In
                   </Button>
                 </Link>
                 <Link to="/auth">
-                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+                  <Button className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 hover:from-orange-600 hover:via-pink-600 hover:to-purple-600 text-white font-bold transition-all duration-150">
                     Get Started
                   </Button>
                 </Link>
@@ -198,33 +177,33 @@ const NavBar = () => {
             )}
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          {/* Hamburger menu (visible on mobile/tablet) */}
+          <div className="lg:hidden flex items-center">
             <Button
               variant="ghost"
               size="icon"
               aria-label={mobileMenu ? "Close menu" : "Open menu"}
               onClick={() => setMobileMenu((v) => !v)}
-              className="focus:ring focus:ring-blue-200"
+              className="focus:ring focus:ring-pink-200"
             >
-              {mobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenu ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
             </Button>
           </div>
         </div>
-        {/* Mobile Drawer */}
+
+        {/* Mobile Drawer: all nav items always visible */}
         {mobileMenu && (
-          <div className="md:hidden absolute left-0 top-16 w-full bg-white border-b z-40 shadow-lg animate-fade-in">
-            <div className="flex flex-col px-4 py-4 gap-2">
-              {visibleNavItems.map((item) => (
+          <div className="lg:hidden absolute left-0 top-16 w-full bg-white/95 border-b z-40 shadow animate-fade-in">
+            <div className="flex flex-col px-5 py-4 gap-1">
+              {[...visibleMainNav, ...visibleExtraNav].map((item) => (
                 <Link
                   key={item.href}
                   to={item.href}
-                  className={`flex items-center gap-2 px-2 py-3 rounded-md text-base font-medium transition-all duration-200
-                    ${
-                      isActive(location, item.href)
-                        ? 'bg-gradient-to-tr from-blue-100 to-purple-100 text-blue-700 shadow'
-                        : 'text-gray-700 hover:text-blue-700 hover:bg-blue-50'
-                    }
+                  className={`
+                    flex items-center gap-3 px-2 py-3 rounded-md text-lg font-medium transition-all duration-150
+                    ${isActive(location, item.href)
+                      ? 'bg-gradient-to-tr from-orange-100 to-pink-100 text-pink-700 shadow'
+                      : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'}
                   `}
                   onClick={handleNavClick}
                 >
@@ -232,46 +211,29 @@ const NavBar = () => {
                   <span>{item.label}</span>
                 </Link>
               ))}
-              {visibleProfileItems.map((item) => (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={`flex items-center gap-2 px-2 py-3 rounded-md text-base font-medium transition-all duration-200
-                    ${
-                      isActive(location, item.href)
-                        ? 'bg-gradient-to-tr from-blue-100 to-purple-100 text-blue-700 shadow'
-                        : 'text-gray-700 hover:text-blue-700 hover:bg-blue-50'
-                    }
-                  `}
-                  onClick={handleNavClick}
-                >
-                  <item.icon className="w-5 h-5" />
-                  <span>{item.label}</span>
-                </Link>
-              ))}
-              {/* Mobile user actions */}
+              {/* User actions */}
               {user ? (
                 <Button
                   variant="outline"
-                  className="mt-2 flex items-center gap-2 w-full text-red-600 hover:bg-red-100"
+                  className="mt-3 flex items-center gap-2 w-full text-red-600 hover:bg-red-100"
                   onClick={handleSignOut}
                 >
                   <LogOut className="w-4 h-4" />
                   Sign out
                 </Button>
               ) : (
-                <>
+                <div className="flex flex-col gap-2 mt-3">
                   <Link to="/auth" onClick={handleNavClick}>
-                    <Button variant="ghost" className="w-full text-gray-600 hover:text-blue-600 mb-2">
+                    <Button variant="ghost" className="w-full text-gray-700 hover:text-orange-600 hover:bg-orange-50">
                       Sign In
                     </Button>
                   </Link>
                   <Link to="/auth" onClick={handleNavClick}>
-                    <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+                    <Button className="w-full bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 hover:from-orange-600 hover:via-pink-600 hover:to-purple-600 text-white font-bold">
                       Get Started
                     </Button>
                   </Link>
-                </>
+                </div>
               )}
             </div>
           </div>
@@ -282,4 +244,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-
