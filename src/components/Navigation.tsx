@@ -14,7 +14,7 @@ const Navigation = ({ user, onLogout, onNavigate, currentView }) => {
     { id: 3, title: "Item returned", type: "return", time: "3h ago" }
   ]);
 
-  const navItems = getNavItems(user.role);
+  const navItems = getNavItems(user?.role);
 
   return (
     <nav className="bg-white/95 backdrop-blur-sm border-b border-orange-100 sticky top-0 z-50">
@@ -37,16 +37,16 @@ const Navigation = ({ user, onLogout, onNavigate, currentView }) => {
           <div className="hidden lg:flex items-center space-x-8">
             {navItems.map((item) => (
               <button
-                key={item.id}
-                onClick={() => onNavigate(item.id)}
+                key={item.href}
+                onClick={() => onNavigate(item.href)}
                 className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
-                  currentView === item.id
+                  currentView === item.href
                     ? 'bg-orange-100 text-orange-600'
                     : 'text-gray-600 hover:text-orange-600 hover:bg-orange-50'
                 }`}
               >
                 <item.icon className="w-4 h-4" />
-                <span>{item.label}</span>
+                <span>{item.title}</span>
               </button>
             ))}
           </div>
@@ -54,7 +54,7 @@ const Navigation = ({ user, onLogout, onNavigate, currentView }) => {
           {/* Right Side */}
           <div className="flex items-center space-x-4">
             {/* Add Item Button */}
-            {(user.role === 'student' || user.role === 'vendor') && (
+            {(user?.role === 'student' || user?.role === 'vendor') && (
               <Button
                 size="sm"
                 className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white hidden sm:flex"
@@ -86,23 +86,23 @@ const Navigation = ({ user, onLogout, onNavigate, currentView }) => {
             <div className="space-y-2">
               {navItems.map((item) => (
                 <button
-                  key={item.id}
+                  key={item.href}
                   onClick={() => {
-                    onNavigate(item.id);
+                    onNavigate(item.href);
                     setIsMobileMenuOpen(false);
                   }}
                   className={`flex items-center space-x-2 w-full px-3 py-2 rounded-lg transition-colors ${
-                    currentView === item.id
+                    currentView === item.href
                       ? 'bg-orange-100 text-orange-600'
                       : 'text-gray-600 hover:text-orange-600 hover:bg-orange-50'
                   }`}
                 >
                   <item.icon className="w-4 h-4" />
-                  <span>{item.label}</span>
+                  <span>{item.title}</span>
                 </button>
               ))}
               
-              {(user.role === 'student' || user.role === 'vendor') && (
+              {(user?.role === 'student' || user?.role === 'vendor') && (
                 <Button
                   className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white mt-4"
                   onClick={() => {

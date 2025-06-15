@@ -1,3 +1,4 @@
+
 import {
   Home,
   LayoutDashboard,
@@ -38,35 +39,39 @@ const navigationItems: SidebarNavItem[] = [
     description: "Browse all listed items",
   },
   {
-    label: 'Community',
+    title: 'Community',
     href: '/community-wishlist',
     icon: Heart,
     description: 'Request items from community'
   },
   {
-    label: 'Squad Up',
+    title: 'Squad Up',
     href: '/squad-up',
     icon: Users,
     description: 'Group rentals with friends'
   },
   {
-    label: 'Campus Pulse',
+    title: 'Campus Pulse',
     href: '/campus-pulse',
     icon: TrendingUp,
     description: 'Your personalized feed'
   },
   {
-    label: 'Campus Credits',
+    title: 'Campus Credits',
     href: '/campus-credits',
     icon: Award,
     description: 'Loyalty rewards program'
   },
   {
-    label: 'Sustainability',
+    title: 'Sustainability',
     href: '/sustainability',
     icon: Leaf,
     description: 'Your environmental impact'
   }
 ];
+
+export const getNavItems = (userRole?: string) => {
+  return navigationItems;
+};
 
 export default navigationItems;
