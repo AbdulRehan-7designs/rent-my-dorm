@@ -46,7 +46,7 @@ const Navigation = ({ user, onLogout }) => {
         return <StudentDashboard user={user} onLogout={onLogout} onNavigate={handleNavigate} />;
       
       case 'add-item':
-        return <AddItemPage user={user} onBack={() => handleNavigate('dashboard')} />;
+        return <AddItemPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'browse-items':
         return <BrowseItemsPage />;
@@ -55,52 +55,52 @@ const Navigation = ({ user, onLogout }) => {
         return <ProfilePage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'settings':
-        return <SettingsPage />;
+        return <SettingsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'active-rentals':
-        return <ActiveRentalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
+        return <ActiveRentalsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'vendor-analytics':
         return <VendorAnalyticsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'vendor-orders':
-        return <VendorOrdersPage user={user} onBack={() => handleNavigate('dashboard')} />;
+        return <VendorOrdersPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'chat':
-        return <ChatInterface />;
+        return <ChatInterface onBack={() => handleNavigate('dashboard')} />;
       
       case 'admin-approvals':
-        return <AdminApprovalsPage />;
+        return <AdminApprovalsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'admin-announcements':
-        return <AdminAnnouncementsPage />;
+        return <AdminAnnouncementsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'college-management':
-        return <CollegeManagementPage />;
+        return <CollegeManagementPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'vendor-applications':
-        return <VendorApplicationsPage />;
+        return <VendorApplicationsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'campus-credits':
         return <CampusCreditsPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'campus-pulse':
-        return <CampusPulsePage />;
+        return <CampusPulsePage onBack={() => handleNavigate('dashboard')} />;
       
       case 'leaderboard':
-        return <LeaderboardPage />;
+        return <LeaderboardPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'squad-up':
-        return <SquadUpPage />;
+        return <SquadUpPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'my-rentals':
         return <MyRentalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'liked-items':
-        return <LikedItemsPage />;
+        return <LikedItemsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'sustainability':
-        return <SustainabilityPage />;
+        return <SustainabilityPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'contact':
         return <ContactPage onBack={() => handleNavigate('dashboard')} itemOwner={null} item={null} />;
