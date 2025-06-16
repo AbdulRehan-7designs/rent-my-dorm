@@ -49,10 +49,10 @@ const Navigation = ({ user, onLogout }) => {
         return <AddItemPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'browse-items':
-        return <BrowseItemsPage onNavigate={handleNavigate} />;
+        return <BrowseItemsPage />;
       
       case 'profile':
-        return <ProfilePage onBack={() => handleNavigate('dashboard')} />;
+        return <ProfilePage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'settings':
         return <SettingsPage onBack={() => handleNavigate('dashboard')} />;
@@ -94,7 +94,7 @@ const Navigation = ({ user, onLogout }) => {
         return <SquadUpPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'my-rentals':
-        return <MyRentalsPage onBack={() => handleNavigate('dashboard')} />;
+        return <MyRentalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'liked-items':
         return <LikedItemsPage onBack={() => handleNavigate('dashboard')} />;
@@ -106,7 +106,7 @@ const Navigation = ({ user, onLogout }) => {
         return <ContactPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'security':
-        return <SecurityDashboard user={user} onBack={() => handleNavigate('dashboard')} />;
+        return <SecurityDashboard onBack={() => handleNavigate('dashboard')} />;
       
       default:
         return <StudentDashboard user={user} onLogout={onLogout} onNavigate={handleNavigate} />;
