@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { User, Store, Shield, Mail, ArrowRight, UserCircle, Loader2 } from 'lucide-react';
@@ -60,6 +61,45 @@ const SignupPage = () => {
       emojis: ['👑', '🛡️', '📊', '🎯'],
       benefits: ['👑 Ultimate control', '📊 Deep insights', '🛡️ Security powers', '🎯 Impact campus life']
     }
+  ];
+
+  const colleges = [
+    'JNTUH University College of Engg Sci & Tech, Hyderabad',
+    'OU College of Engineering, Hyderabad',
+    'Chaitanya Bharathi Institute of Technology (CBIT), Gandipet',
+    'VNR Vignana Jyothi Institute of Engineering and Technology, Bachupally',
+    'Vasavi College of Engineering, Hyderabad',
+    'Gokaraju Rangaraju Institute of Engg and Tech, Bachupally',
+    'Keshav Memorial Institute of Technology, Narayanaguda',
+    'JNTUH UCE, Kukatpally',
+    'Mahatma Gandhi Institute of Technology (MGIT), Gandipet',
+    'CVR College of Engineering, Ibrahimpatnam',
+    'B V Raju Institute of Technology (BVRIT), Narsapur',
+    'MVSR Engineering College, Nadergul',
+    'Vardhaman College of Engineering, Shamshabad',
+    'Srinidhi Institute of Science and Technology, Ghatkesar',
+    'Anurag University (formerly Anurag Group), Ghatkesar',
+    'Neil Gogte Institute of Technology, Kachivani Singaram',
+    'Institute of Aeronautical Engineering (IARE), Dundigal',
+    'JNTUH UCE, Sultanpur',
+    'JNTUH UCE, Jagitial',
+    'Kakatiya Institute of Technology and Science (KITS), Warangal',
+    'CMR College of Engineering and Technology, Kandlakoya',
+    'Geetanjali College of Engineering and Technology, Keesara',
+    'Vidyajyothi Institute of Technology, Moinabad',
+    'KU College of Engineering and Technology, Warangal',
+    'Matrusri Engineering College, Hyderabad',
+    'Keshav Memorial Engineering College, Kachivani Singaram',
+    'Gurunanak Institute of Technology, Ibrahimpatnam',
+    'Global Institute of Engineering and Technology, Chilkur',
+    'SR University (formerly SR Engineering College), Hasanparthy',
+    'JNTUH UCE, Manthani',
+    'Muffakham Jah College of Engineering and Technology, Banjara Hills',
+    'Shadan College of Engineering and Technology',
+    'Lords Institute of Engineering and Technology',
+    'Deccan College of Engineering and Technology',
+    'Methodist College of Engineering and Technology',
+    'Other'
   ];
 
   const handleInputChange = (field: string, value: string) => {
@@ -181,18 +221,22 @@ const SignupPage = () => {
               </div>
             </div>
 
-            {/* College Input (Optional) */}
+            {/* College Selection */}
             {selectedRole !== 'admin' && (
               <div className="space-y-2">
-                <Label htmlFor="college" className="text-base font-semibold text-gray-700">College/University (Optional)</Label>
-                <Input
-                  id="college"
-                  type="text"
-                  placeholder="e.g., IIT Delhi, MIT, Stanford..."
-                  className="h-14 text-base border-2 border-gray-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all duration-300 rounded-xl"
-                  value={formData.college}
-                  onChange={(e) => handleInputChange('college', e.target.value)}
-                />
+                <Label htmlFor="college" className="text-base font-semibold text-gray-700">College/University</Label>
+                <Select value={formData.college} onValueChange={(value) => handleInputChange('college', value)}>
+                  <SelectTrigger className="h-14 text-base border-2 border-gray-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all duration-300 rounded-xl">
+                    <SelectValue placeholder="Select your college" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {colleges.map((college) => (
+                      <SelectItem key={college} value={college} className="text-sm">
+                        {college}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             )}
 
