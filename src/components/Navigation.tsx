@@ -58,7 +58,7 @@ const Navigation = ({ user, onLogout }) => {
         return <SettingsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'active-rentals':
-        return <ActiveRentalsPage onBack={() => handleNavigate('dashboard')} />;
+        return <ActiveRentalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'vendor-analytics':
         return <VendorAnalyticsPage onBack={() => handleNavigate('dashboard')} />;
@@ -103,7 +103,7 @@ const Navigation = ({ user, onLogout }) => {
         return <SustainabilityPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'contact':
-        return <ContactPage onBack={() => handleNavigate('dashboard')} />;
+        return <ContactPage onBack={() => handleNavigate('dashboard')} itemOwner={null} item={null} />;
       
       case 'security':
         return <SecurityDashboard onBack={() => handleNavigate('dashboard')} />;
