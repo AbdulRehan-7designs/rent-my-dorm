@@ -27,6 +27,8 @@ import LikedItemsPage from './LikedItemsPage';
 import SustainabilityPage from './SustainabilityPage';
 import ContactPage from './ContactPage';
 import SecurityDashboard from './Security/SecurityDashboard';
+import AIRecommendations from './AIRecommendations';
+import PaymentPage from './PaymentPage';
 
 const Navigation = ({ user, onLogout }) => {
   const [currentView, setCurrentView] = useState('dashboard');
@@ -50,6 +52,9 @@ const Navigation = ({ user, onLogout }) => {
       
       case 'browse-items':
         return <BrowseItemsPage />;
+      
+      case 'ai-recommendations':
+        return <AIRecommendations onBack={() => handleNavigate('dashboard')} user={user} />;
       
       case 'profile':
         return <ProfilePage user={user} onBack={() => handleNavigate('dashboard')} />;
@@ -107,6 +112,9 @@ const Navigation = ({ user, onLogout }) => {
       
       case 'security':
         return <SecurityDashboard onBack={() => handleNavigate('dashboard')} />;
+      
+      case 'payment':
+        return <PaymentPage onBack={() => handleNavigate('dashboard')} />;
       
       default:
         return <StudentDashboard user={user} onLogout={onLogout} onNavigate={handleNavigate} />;

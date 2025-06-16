@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,80 +20,113 @@ import {
   Plus,
   Users,
   DollarSign,
-  Eye
+  Eye,
+  Bell,
+  Sparkles
 } from 'lucide-react';
+import { getUserByRole, mockItems, getAIRecommendedItems, getTrendingItems } from '@/services/mockData';
+import EngagementFeatures from './EngagementFeatures';
+import AnnouncementPopup from './AnnouncementPopup';
 
 const StudentDashboard = ({ user, onLogout, onNavigate }) => {
   const [activeSection, setActiveSection] = useState('overview');
+  const [showAnnouncement, setShowAnnouncement] = useState(false);
+  const [abdulRehanUser, setAbdulRehanUser] = useState(null);
+
+  useEffect(() => {
+    // Set Abdul Rehan as the current user
+    const currentUser = getUserByRole('student');
+    setAbdulRehanUser(currentUser);
+    
+    // Show announcement popup after 2 seconds
+    const timer = setTimeout(() => {
+      setShowAnnouncement(true);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const currentUser = abdulRehanUser || user;
 
   const studentStats = [
-    { label: 'Items Rented', value: '12', icon: Package, color: 'text-blue-600', trend: '+3 this month' },
-    { label: 'Money Saved', value: '₹8,500', icon: DollarSign, color: 'text-green-600', trend: 'vs buying' },
-    { label: 'Trust Score', value: '850', icon: Star, color: 'text-yellow-600', trend: '+50 points' },
-    { label: 'Community Rank', value: '#47', icon: Award, color: 'text-purple-600', trend: '+12 positions' }
+    { label: 'Items Rented', value: '18', icon: Package, color: 'text-blue-600', trend: '+5 this month' },
+    { label: 'Money Saved', value: '₹12,850', icon: DollarSign, color: 'text-green-600', trend: 'vs buying' },
+    { label: 'Trust Score', value: currentUser?.trustScore || '950', icon: Star, color: 'text-yellow-600', trend: '+125 points' },
+    { label: 'Community Rank', value: '#23', icon: Award, color: 'text-purple-600', trend: '+24 positions' }
   ];
 
   const quickActions = [
     { label: 'Browse Items', icon: Search, action: () => onNavigate('browse-items'), color: 'bg-blue-500' },
-    { label: 'AI Recommendations', icon: Award, action: () => onNavigate('ai-recommendations'), color: 'bg-purple-500' },
+    { label: '🤖 AI Recommendations', icon: Award, action: () => onNavigate('ai-recommendations'), color: 'bg-purple-500' },
     { label: 'Scan Item', icon: Camera, action: () => onNavigate('ai-object-recognition'), color: 'bg-green-500' },
     { label: 'My Rentals', icon: Package, action: () => onNavigate('my-rentals'), color: 'bg-orange-500' },
     { label: 'Messages', icon: MessageSquare, action: () => onNavigate('chat'), color: 'bg-red-500' },
     { label: 'Liked Items', icon: Heart, action: () => onNavigate('liked-items'), color: 'bg-pink-500' }
   ];
 
-  // Add demo fee system action
+  // Enhanced demo actions with Abdul's personalized content
   const demoActions = [
     { 
-      label: 'Try Fee Calculator', 
+      label: '💳 Try Payment System', 
       icon: DollarSign, 
-      action: () => onNavigate('demo-rental-confirmation'), 
+      action: () => onNavigate('payment'), 
       color: 'bg-gradient-to-r from-emerald-500 to-teal-500',
-      description: 'Demo the transaction fee system with loyalty discounts'
+      description: 'Experience our upcoming smart payment gateway'
     }
   ];
 
-  const recentActivity = [
-    { action: 'Rented', item: 'MacBook Pro 13"', from: 'TechRentals Co.', amount: '₹1,500/day', time: '2 hours ago', status: 'active' },
-    { action: 'Returned', item: 'Canon DSLR Camera', to: 'PhotoGear Hub', amount: '₹800/day', time: '1 day ago', status: 'completed' },
-    { action: 'Liked', item: 'Gaming Console PS5', owner: 'GameZone Rentals', time: '3 hours ago', status: 'saved' }
-  ];
+  // Get AI recommended and trending items for Abdul
+  const aiRecommendedItems = getAIRecommendedItems().slice(0, 3);
+  const trendingItems = getTrendingItems().slice(0, 3);
 
-  const trendingCategories = [
-    { name: 'Electronics', count: '234 items', icon: Laptop, trend: '+12%' },
-    { name: 'Photography', count: '89 items', icon: Camera, trend: '+8%' },
-    { name: 'Gaming', count: '156 items', icon: Gamepad2, trend: '+15%' },
-    { name: 'Audio', count: '67 items', icon: Headphones, trend: '+5%' }
+  const recentActivity = [
+    { action: 'Rented', item: '🤖 AI-Powered Gaming Laptop', from: 'Abdul Rehan (Vendor)', amount: '₹1,200/day', time: '2 hours ago', status: 'active', ai: true },
+    { action: 'Returned', item: '📚 Complete Engineering Books Set', to: 'Campus Library', amount: '₹150/week', time: '1 day ago', status: 'completed', trending: true },
+    { action: 'AI Suggested', item: '🌊 Smart Air Cooler', owner: 'Local Campus Vendor', time: '3 hours ago', status: 'saved', ai: true }
   ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Welcome Header */}
+      {/* Announcement Popup */}
+      {showAnnouncement && (
+        <AnnouncementPopup onClose={() => setShowAnnouncement(false)} />
+      )}
+
+      {/* Enhanced Welcome Header for Abdul Rehan */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              Welcome back, {user?.name || 'Student'}! 🎓
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center space-x-2">
+              <span>Welcome back, {currentUser?.name || 'Abdul Rehan'}!</span>
+              <Sparkles className="w-6 h-6 text-yellow-500 animate-pulse" />
             </h1>
-            <p className="text-gray-600 mt-2">Ready to discover and rent amazing items from your campus community?</p>
+            <p className="text-gray-600 mt-2">
+              🎓 {currentUser?.college || 'IIT Delhi'} • Level {currentUser?.level || '8'} Student • 
+              <span className="text-green-600 font-semibold"> Trust Score: {currentUser?.trustScore || '950'}</span>
+            </p>
           </div>
           <div className="flex items-center space-x-4">
+            <Button variant="outline" size="sm" onClick={() => setShowAnnouncement(true)}>
+              <Bell className="w-4 h-4 mr-2" />
+              <span className="hidden md:inline">Announcements</span>
+              <Badge className="ml-2 bg-red-500 text-white">New!</Badge>
+            </Button>
             <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2">
-              Level {user?.level || '5'} Student
+              Level {currentUser?.level || '8'} Student
             </Badge>
             <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2">
-              {user?.points || '850'} Points
+              {currentUser?.points || '2450'} Points
             </Badge>
             <Avatar className="w-12 h-12">
               <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-                {user?.name?.charAt(0)?.toUpperCase() || 'S'}
+                {currentUser?.avatar || 'AR'}
               </AvatarFallback>
             </Avatar>
           </div>
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Enhanced Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {studentStats.map((stat, index) => (
           <Card key={index} className="hover:shadow-lg transition-shadow">
@@ -113,26 +146,27 @@ const StudentDashboard = ({ user, onLogout, onNavigate }) => {
         ))}
       </div>
 
-      {/* Demo Fee System Section */}
+      {/* Enhanced Demo Payment System Section */}
       <Card className="mb-8 bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <DollarSign className="w-5 h-5 text-emerald-600" />
-            <span>🚀 New: Smart Fee System</span>
+            <span>💳 Smart Payment System - Coming Soon!</span>
           </CardTitle>
           <CardDescription>
-            Experience our intelligent transaction fee system with loyalty rewards and transparent pricing
+            Experience our revolutionary payment gateway with AI-powered fee optimization
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <h4 className="font-semibold text-emerald-900">Features:</h4>
+              <h4 className="font-semibold text-emerald-900">🚀 What's Coming:</h4>
               <ul className="text-sm text-emerald-800 space-y-1">
-                <li>• 5% commission on rentals (3% for loyal users)</li>
-                <li>• Minimum ₹10, Maximum ₹100 per transaction</li>
-                <li>• Secure escrow until rental completion</li>
-                <li>• Transparent fee breakdown</li>
+                <li>• ⚡ Instant UPI & wallet payments</li>
+                <li>• 🤖 AI-optimized transaction fees (3-5%)</li>
+                <li>• 🔒 Military-grade escrow security</li>
+                <li>• 🎁 Campus credits & loyalty rewards</li>
+                <li>• 📱 One-tap payment experience</li>
               </ul>
             </div>
             <div className="flex items-center justify-center">
@@ -152,12 +186,17 @@ const StudentDashboard = ({ user, onLogout, onNavigate }) => {
         </CardContent>
       </Card>
 
-      {/* Quick Actions */}
+      {/* Engagement Features Component */}
+      <div className="mb-8">
+        <EngagementFeatures onNavigate={onNavigate} />
+      </div>
+
+      {/* Enhanced Quick Actions */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Package className="w-5 h-5 text-blue-500" />
-            <span>Quick Actions</span>
+            <span>🚀 Quick Actions</span>
           </CardTitle>
           <CardDescription>Get started with popular campus rental activities</CardDescription>
         </CardHeader>
@@ -181,14 +220,14 @@ const StudentDashboard = ({ user, onLogout, onNavigate }) => {
       </Card>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Recent Activity */}
+        {/* Enhanced Recent Activity with AI/Trending Tags */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <TrendingUp className="w-5 h-5 text-green-500" />
-              <span>Recent Activity</span>
+              <span>📊 Recent Activity</span>
             </CardTitle>
-            <CardDescription>Your latest rental activities and interactions</CardDescription>
+            <CardDescription>Your latest rental activities with smart insights</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -205,9 +244,13 @@ const StudentDashboard = ({ user, onLogout, onNavigate }) => {
                        <Heart className="w-5 h-5" />}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">
-                        <span className="text-blue-600">{activity.action}</span> {activity.item}
-                      </p>
+                      <div className="flex items-center space-x-2">
+                        <p className="font-medium text-gray-900">
+                          <span className="text-blue-600">{activity.action}</span> {activity.item}
+                        </p>
+                        {activity.ai && <Badge className="bg-purple-100 text-purple-800 text-xs">🤖 AI</Badge>}
+                        {activity.trending && <Badge className="bg-orange-100 text-orange-800 text-xs">🔥 Trending</Badge>}
+                      </div>
                       <p className="text-sm text-gray-600">
                         {activity.from ? `from ${activity.from}` : 
                          activity.to ? `to ${activity.to}` : 
@@ -225,36 +268,50 @@ const StudentDashboard = ({ user, onLogout, onNavigate }) => {
           </CardContent>
         </Card>
 
-        {/* Trending Categories */}
+        {/* AI Recommended Items Showcase */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Star className="w-5 h-5 text-yellow-500" />
-              <span>Trending in Your Campus</span>
+              <Sparkles className="w-5 h-5 text-purple-500" />
+              <span>🤖 AI Picks for You</span>
             </CardTitle>
-            <CardDescription>Popular rental categories this week</CardDescription>
+            <CardDescription>Personalized recommendations powered by AI</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {trendingCategories.map((category, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+              {aiRecommendedItems.map((item, index) => (
+                <div key={index} className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg hover:from-purple-100 hover:to-blue-100 transition-colors cursor-pointer">
                   <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-orange-400 to-red-400 flex items-center justify-center">
-                      <category.icon className="w-5 h-5 text-white" />
-                    </div>
+                    <img 
+                      src={item.images[0]} 
+                      alt={item.title}
+                      className="w-12 h-12 object-cover rounded-lg"
+                    />
                     <div>
-                      <p className="font-medium text-gray-900">{category.name}</p>
-                      <p className="text-sm text-gray-600">{category.count}</p>
+                      <div className="flex items-center space-x-2">
+                        <p className="font-medium text-gray-900">{item.title}</p>
+                        <Badge className="bg-purple-100 text-purple-800 text-xs">🤖 AI Pick</Badge>
+                      </div>
+                      <p className="text-sm text-gray-600">{item.location}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <Badge className="bg-green-100 text-green-800">
-                      {category.trend}
-                    </Badge>
+                    <p className="font-semibold text-gray-900">{item.price}</p>
+                    <div className="flex items-center space-x-1">
+                      <Star className="w-3 h-3 text-yellow-500 fill-current" />
+                      <span className="text-xs text-gray-500">{item.rating}</span>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
+            <Button 
+              variant="outline" 
+              className="w-full mt-4"
+              onClick={() => onNavigate('ai-recommendations')}
+            >
+              View All AI Recommendations
+            </Button>
           </CardContent>
         </Card>
       </div>
