@@ -29,7 +29,6 @@ import {
   HelpCircle,
   Shield,
   Plus,
-  MapPin,
   GraduationCap
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -89,7 +88,7 @@ const ACCOUNT_NAV_ITEMS: NavItem[] = [
   { href: '/settings', label: 'Settings', icon: Settings, auth: 'auth', category: 'account', roles: ['student', 'vendor', 'admin'] },
 ];
 
-const isActive = (location, path) => {
+const isActive = (location: any, path: string) => {
   if (path === '/' && location.pathname === '/') return true;
   if (path !== '/' && location.pathname.startsWith(path)) return true;
   return false;
@@ -146,7 +145,7 @@ const NavBar = () => {
 
   const handleNavClick = () => setMobileMenu(false);
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/browse?search=${encodeURIComponent(searchQuery.trim())}`);
@@ -154,7 +153,7 @@ const NavBar = () => {
     }
   };
 
-  const getNavItemsByCategory = (category) => {
+  const getNavItemsByCategory = (category: string) => {
     return visibleNavItems.filter(item => item.category === category);
   };
 

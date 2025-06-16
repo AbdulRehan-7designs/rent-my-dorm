@@ -26,7 +26,7 @@ export const RoleSelector = ({ roles, selectedRole, onRoleSelect, compact = fals
   return (
     <div className="space-y-4">
       <Label className={`${compact ? 'text-base' : 'text-lg'} font-bold text-gray-700 block`}>
-        Choose Your Superhero Role 🦸‍♀️
+        Choose Your Role 🦸‍♀️
       </Label>
       <div className={`grid ${compact ? 'grid-cols-1' : 'md:grid-cols-3'} gap-${compact ? '3' : '6'}`}>
         {roles.map((role) => (
