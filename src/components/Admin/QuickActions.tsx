@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Shield, CheckCircle, AlertTriangle, BarChart3, Settings, Bell, GraduationCap } from 'lucide-react';
+import { Shield, CheckCircle, AlertTriangle, BarChart3, Settings, Bell, GraduationCap, Store, Users } from 'lucide-react';
 
 interface QuickActionsProps {
   onNavigate: (view: string) => void;
@@ -13,10 +13,12 @@ const QuickActions: React.FC<QuickActionsProps> = ({ onNavigate }) => {
   const quickActions = [
     { label: 'Approve Listings', icon: CheckCircle, action: () => onNavigate('admin-approvals'), color: 'bg-green-500', count: 15 },
     { label: 'Review Reports', icon: AlertTriangle, action: () => onNavigate('admin-approvals'), color: 'bg-red-500', count: 3 },
-    { label: 'College Analytics', icon: BarChart3, action: () => onNavigate('vendor-analytics'), color: 'bg-blue-500', count: null },
+    { label: 'College Management', icon: GraduationCap, action: () => onNavigate('college-management'), color: 'bg-blue-500', count: null },
+    { label: 'Vendor Applications', icon: Store, action: () => onNavigate('vendor-applications'), color: 'bg-purple-500', count: 8 },
+    { label: 'College Analytics', icon: BarChart3, action: () => onNavigate('vendor-analytics'), color: 'bg-indigo-500', count: null },
     { label: 'System Settings', icon: Settings, action: () => onNavigate('settings'), color: 'bg-gray-500', count: null },
-    { label: 'Announcements', icon: Bell, action: () => onNavigate('admin-announcements'), color: 'bg-purple-500', count: null },
-    { label: 'Manage Colleges', icon: GraduationCap, action: () => onNavigate('browse-items'), color: 'bg-indigo-500', count: null }
+    { label: 'Announcements', icon: Bell, action: () => onNavigate('admin-announcements'), color: 'bg-orange-500', count: null },
+    { label: 'User Management', icon: Users, action: () => onNavigate('browse-items'), color: 'bg-teal-500', count: null }
   ];
 
   return (

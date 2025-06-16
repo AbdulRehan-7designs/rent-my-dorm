@@ -48,45 +48,149 @@ export type Database = {
         }
         Relationships: []
       }
+      college_admins: {
+        Row: {
+          admin_user_id: string | null
+          college_id: string | null
+          created_at: string | null
+          id: string
+          permissions: Json | null
+          role: string
+          updated_at: string | null
+        }
+        Insert: {
+          admin_user_id?: string | null
+          college_id?: string | null
+          created_at?: string | null
+          id?: string
+          permissions?: Json | null
+          role?: string
+          updated_at?: string | null
+        }
+        Update: {
+          admin_user_id?: string | null
+          college_id?: string | null
+          created_at?: string | null
+          id?: string
+          permissions?: Json | null
+          role?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "college_admins_admin_user_id_fkey"
+            columns: ["admin_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "college_admins_college_id_fkey"
+            columns: ["college_id"]
+            isOneToOne: false
+            referencedRelation: "colleges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      college_statistics: {
+        Row: {
+          average_rating: number | null
+          college_id: string | null
+          id: string
+          last_updated: string | null
+          monthly_revenue: number | null
+          total_active_users: number | null
+          total_listings: number | null
+          total_transactions: number | null
+        }
+        Insert: {
+          average_rating?: number | null
+          college_id?: string | null
+          id?: string
+          last_updated?: string | null
+          monthly_revenue?: number | null
+          total_active_users?: number | null
+          total_listings?: number | null
+          total_transactions?: number | null
+        }
+        Update: {
+          average_rating?: number | null
+          college_id?: string | null
+          id?: string
+          last_updated?: string | null
+          monthly_revenue?: number | null
+          total_active_users?: number | null
+          total_listings?: number | null
+          total_transactions?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "college_statistics_college_id_fkey"
+            columns: ["college_id"]
+            isOneToOne: true
+            referencedRelation: "colleges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       colleges: {
         Row: {
           address: string | null
+          admin_contact_email: string | null
+          admin_contact_phone: string | null
           city: string | null
           college_code: string | null
           college_name: string
           college_type: string | null
           created_at: string | null
           district: string | null
+          establishment_year: number | null
+          features: Json | null
           id: string
           is_active: boolean | null
           state: string | null
+          total_students: number | null
           university_affiliation: string | null
+          verification_status: string | null
         }
         Insert: {
           address?: string | null
+          admin_contact_email?: string | null
+          admin_contact_phone?: string | null
           city?: string | null
           college_code?: string | null
           college_name: string
           college_type?: string | null
           created_at?: string | null
           district?: string | null
+          establishment_year?: number | null
+          features?: Json | null
           id?: string
           is_active?: boolean | null
           state?: string | null
+          total_students?: number | null
           university_affiliation?: string | null
+          verification_status?: string | null
         }
         Update: {
           address?: string | null
+          admin_contact_email?: string | null
+          admin_contact_phone?: string | null
           city?: string | null
           college_code?: string | null
           college_name?: string
           college_type?: string | null
           created_at?: string | null
           district?: string | null
+          establishment_year?: number | null
+          features?: Json | null
           id?: string
           is_active?: boolean | null
           state?: string | null
+          total_students?: number | null
           university_affiliation?: string | null
+          verification_status?: string | null
         }
         Relationships: []
       }
@@ -673,6 +777,85 @@ export type Database = {
           },
         ]
       }
+      vendor_applications: {
+        Row: {
+          applicant_id: string | null
+          applied_at: string | null
+          business_address: string | null
+          business_description: string | null
+          business_name: string
+          business_type: string
+          college_id: string | null
+          contact_email: string
+          contact_phone: string | null
+          created_at: string | null
+          documents_urls: string[] | null
+          id: string
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+        }
+        Insert: {
+          applicant_id?: string | null
+          applied_at?: string | null
+          business_address?: string | null
+          business_description?: string | null
+          business_name: string
+          business_type: string
+          college_id?: string | null
+          contact_email: string
+          contact_phone?: string | null
+          created_at?: string | null
+          documents_urls?: string[] | null
+          id?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+        }
+        Update: {
+          applicant_id?: string | null
+          applied_at?: string | null
+          business_address?: string | null
+          business_description?: string | null
+          business_name?: string
+          business_type?: string
+          college_id?: string | null
+          contact_email?: string
+          contact_phone?: string | null
+          created_at?: string | null
+          documents_urls?: string[] | null
+          id?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_applications_applicant_id_fkey"
+            columns: ["applicant_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_applications_college_id_fkey"
+            columns: ["college_id"]
+            isOneToOne: false
+            referencedRelation: "colleges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_applications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wishlist: {
         Row: {
           created_at: string | null
@@ -714,7 +897,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_college_statistics: {
+        Args: { college_id_param: string }
+        Returns: undefined
+      }
     }
     Enums: {
       booking_type: "instant" | "request"
