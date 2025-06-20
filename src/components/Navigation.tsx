@@ -56,7 +56,7 @@ const Navigation = ({ user, onLogout }) => {
         return <BrowseItemsPage />;
       
       case 'ai-recommendations':
-        return <AIRecommendations onBack={() => handleNavigate('dashboard')} />;
+        return <AIRecommendations user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'profile':
         return <ProfilePage user={user} onBack={() => handleNavigate('dashboard')} />;
@@ -71,13 +71,13 @@ const Navigation = ({ user, onLogout }) => {
         return <VendorAnalyticsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'vendor-orders':
-        return <VendorOrdersPage user={user} onBack={() => handleNavigate('dashboard')} />;
+        return <VendorOrdersPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'chat':
         return <ChatInterface onBack={() => handleNavigate('dashboard')} />;
       
       case 'admin-approvals':
-        return <AdminApprovalsPage onBack={() => handleNavigate('dashboard')} />;
+        return <AdminApprovalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'admin-announcements':
         return <AdminAnnouncementsPage onBack={() => handleNavigate('dashboard')} />;
@@ -89,7 +89,7 @@ const Navigation = ({ user, onLogout }) => {
         return <VendorApplicationsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'campus-credits':
-        return <CampusCreditsPage />;
+        return <CampusCreditsPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'campus-pulse':
         return <CampusPulsePage />;
