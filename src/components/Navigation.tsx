@@ -59,10 +59,10 @@ const Navigation = ({ user, onLogout }) => {
         return <AIRecommendations onBack={() => handleNavigate('dashboard')} />;
       
       case 'profile':
-        return <ProfilePage onBack={() => handleNavigate('dashboard')} />;
+        return <ProfilePage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'settings':
-        return <SettingsPage onBack={() => handleNavigate('dashboard')} />;
+        return <SettingsPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'active-rentals':
         return <ActiveRentalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
@@ -86,7 +86,7 @@ const Navigation = ({ user, onLogout }) => {
         return <CollegeManagementPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'vendor-applications':
-        return <VendorApplicationsPage onBack={() => handleNavigate('dashboard')} />;
+        return <VendorApplicationsPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'campus-credits':
         return <CampusCreditsPage />;
@@ -104,7 +104,7 @@ const Navigation = ({ user, onLogout }) => {
         return <MyRentalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'liked-items':
-        return <LikedItemsPage />;
+        return <LikedItemsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'sustainability':
         return <SustainabilityPage />;
