@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import DashboardLayout from '../DashboardLayout';
 import VendorOverviewPage from './VendorOverviewPage';
 import VendorListingsPage from './VendorListingsPage';
-import AddItemPage from './AddItemPage';
+import AddItemPage from '../../AddItemPage';
 import VendorCalendarPage from './VendorCalendarPage';
 import VendorOrdersPage from './VendorOrdersPage';
 import VendorRevenuePage from './VendorRevenuePage';
@@ -23,7 +23,7 @@ const VendorDashboard: React.FC<VendorDashboardProps> = ({ user, onLogout }) => 
       case 'listings':
         return <VendorListingsPage user={user} />;
       case 'add-item':
-        return <AddItemPage user={user} />;
+        return <AddItemPage onBack={() => {}} />;
       case 'calendar':
         return <VendorCalendarPage user={user} />;
       case 'orders':

@@ -62,7 +62,7 @@ const Navigation = ({ user, onLogout }) => {
         return <ProfilePage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'settings':
-        return <SettingsPage user={user} />;
+        return <SettingsPage />;
       
       case 'active-rentals':
         return <ActiveRentalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
@@ -113,6 +113,7 @@ const Navigation = ({ user, onLogout }) => {
         return <ContactPage onBack={() => handleNavigate('dashboard')} itemOwner={null} item={null} />;
       
       case 'security':
+        return <SecurityD
         return <SecurityDashboard onBack={() => handleNavigate('dashboard')} />;
       
       case 'payment':
