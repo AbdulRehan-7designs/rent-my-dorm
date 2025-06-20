@@ -56,10 +56,10 @@ const Navigation = ({ user, onLogout }) => {
         return <BrowseItemsPage />;
       
       case 'ai-recommendations':
-        return <AIRecommendations onBack={() => handleNavigate('dashboard')} user={user} />;
+        return <AIRecommendations onBack={() => handleNavigate('dashboard')} />;
       
       case 'profile':
-        return <ProfilePage user={user} onBack={() => handleNavigate('dashboard')} />;
+        return <ProfilePage onBack={() => handleNavigate('dashboard')} />;
       
       case 'settings':
         return <SettingsPage onBack={() => handleNavigate('dashboard')} />;
@@ -77,19 +77,19 @@ const Navigation = ({ user, onLogout }) => {
         return <ChatInterface onBack={() => handleNavigate('dashboard')} />;
       
       case 'admin-approvals':
-        return <AdminApprovalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
+        return <AdminApprovalsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'admin-announcements':
         return <AdminAnnouncementsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'college-management':
-        return <CollegeManagementPage />;
+        return <CollegeManagementPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'vendor-applications':
-        return <VendorApplicationsPage user={user} onBack={() => handleNavigate('dashboard')} />;
+        return <VendorApplicationsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'campus-credits':
-        return <CampusCreditsPage user={user} />;
+        return <CampusCreditsPage />;
       
       case 'campus-pulse':
         return <CampusPulsePage onBack={() => handleNavigate('dashboard')} />;
@@ -104,7 +104,7 @@ const Navigation = ({ user, onLogout }) => {
         return <MyRentalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'liked-items':
-        return <LikedItemsPage onBack={() => handleNavigate('dashboard')} />;
+        return <LikedItemsPage />;
       
       case 'sustainability':
         return <SustainabilityPage />;
