@@ -71,7 +71,7 @@ const Navigation = ({ user, onLogout }) => {
         return <VendorAnalyticsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'vendor-orders':
-        return <VendorOrdersPage onBack={() => handleNavigate('dashboard')} />;
+        return <VendorOrdersPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'chat':
         return <ChatInterface onBack={() => handleNavigate('dashboard')} />;
@@ -113,7 +113,6 @@ const Navigation = ({ user, onLogout }) => {
         return <ContactPage onBack={() => handleNavigate('dashboard')} itemOwner={null} item={null} />;
       
       case 'security':
-        return <SecurityD
         return <SecurityDashboard onBack={() => handleNavigate('dashboard')} />;
       
       case 'payment':
