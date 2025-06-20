@@ -59,10 +59,10 @@ const Navigation = ({ user, onLogout }) => {
         return <AIRecommendations onBack={() => handleNavigate('dashboard')} user={user} />;
       
       case 'profile':
-        return <ProfilePage user={user} onBack={() => handleNavigate('dashboard')} />;
+        return <ProfilePage onBack={() => handleNavigate('dashboard')} />;
       
       case 'settings':
-        return <SettingsPage onBack={() => handleNavigate('dashboard')} />;
+        return <SettingsPage />;
       
       case 'active-rentals':
         return <ActiveRentalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
@@ -71,7 +71,7 @@ const Navigation = ({ user, onLogout }) => {
         return <VendorAnalyticsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'vendor-orders':
-        return <VendorOrdersPage onBack={() => handleNavigate('dashboard')} />;
+        return <VendorOrdersPage />;
       
       case 'chat':
         return <ChatInterface onBack={() => handleNavigate('dashboard')} />;
@@ -107,7 +107,7 @@ const Navigation = ({ user, onLogout }) => {
         return <LikedItemsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'sustainability':
-        return <SustainabilityPage onBack={() => handleNavigate('dashboard')} />;
+        return <SustainabilityPage />;
       
       case 'contact':
         return <ContactPage onBack={() => handleNavigate('dashboard')} itemOwner={null} item={null} />;
