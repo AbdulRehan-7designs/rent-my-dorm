@@ -95,7 +95,7 @@ const Navigation = ({ user, onLogout }) => {
         return <CampusPulsePage />;
       
       case 'leaderboard':
-        return <LeaderboardPage onBack={() => handleNavigate('dashboard')} />;
+        return <LeaderboardPage />;
       
       case 'squad-up':
         return <SquadUpPage onBack={() => handleNavigate('dashboard')} />;
