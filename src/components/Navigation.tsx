@@ -77,7 +77,7 @@ const Navigation = ({ user, onLogout }) => {
         return <ChatInterface onBack={() => handleNavigate('dashboard')} />;
       
       case 'admin-approvals':
-        return <AdminApprovalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
+        return <AdminApprovalsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'admin-announcements':
         return <AdminAnnouncementsPage onBack={() => handleNavigate('dashboard')} />;
@@ -86,13 +86,13 @@ const Navigation = ({ user, onLogout }) => {
         return <CollegeManagementPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'vendor-applications':
-        return <VendorApplicationsPage onBack={() => handleNavigate('dashboard')} />;
+        return <VendorApplicationsPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'campus-credits':
-        return <CampusCreditsPage user={user} onBack={() => handleNavigate('dashboard')} />;
+        return <CampusCreditsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'campus-pulse':
-        return <CampusPulsePage />;
+        return <CampusPulsePage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'leaderboard':
         return <LeaderboardPage />;
