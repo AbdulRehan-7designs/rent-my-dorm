@@ -15,7 +15,7 @@ import {
   Gift,
   Rocket,
   Brain,
-  Fire
+  Flame
 } from 'lucide-react';
 import { mockStats, mockTrendingCategories } from '@/services/mockData';
 
@@ -47,7 +47,7 @@ const EngagementFeatures = ({ onNavigate }: EngagementFeaturesProps) => {
       title: '🔥 Trending Now',
       description: 'Hottest items on campus this week',
       value: mockTrendingCategories.length,
-      icon: Fire,
+      icon: Flame,
       color: 'from-red-500 to-orange-500',
       action: () => onNavigate('browse-items')
     },

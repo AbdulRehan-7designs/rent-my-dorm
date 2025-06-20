@@ -29,9 +29,11 @@ import ContactPage from './ContactPage';
 import SecurityDashboard from './Security/SecurityDashboard';
 import AIRecommendations from './AIRecommendations';
 import PaymentPage from './PaymentPage';
+import AnnouncementPopup from './AnnouncementPopup';
 
 const Navigation = ({ user, onLogout }) => {
   const [currentView, setCurrentView] = useState('dashboard');
+  const [showAnnouncement, setShowAnnouncement] = useState(true);
 
   const handleNavigate = (view) => {
     setCurrentView(view);
@@ -108,7 +110,7 @@ const Navigation = ({ user, onLogout }) => {
         return <SustainabilityPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'contact':
-        return <ContactPage onBack={() => handleNavigate('dashboard')} itemOwner={null} item={null} />;
+        return <ContactPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'security':
         return <SecurityDashboard onBack={() => handleNavigate('dashboard')} />;
@@ -123,6 +125,9 @@ const Navigation = ({ user, onLogout }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {showAnnouncement && (
+        <AnnouncementPopup onClose={() => setShowAnnouncement(false)} />
+      )}
       {renderContent()}
     </div>
   );
