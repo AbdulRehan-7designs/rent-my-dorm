@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import StudentDashboard from './StudentDashboard';
-import VendorDashboard from './VendorDashboard';
-import AdminDashboard from './AdminDashboard';
+import StudentDashboard from './Dashboard/Student/StudentDashboard';
+import VendorDashboard from './Dashboard/Vendor/VendorDashboard';
+import AdminDashboard from './Dashboard/Admin/AdminDashboard';
 import AddItemPage from './AddItemPage';
 import BrowseItemsPage from '../pages/BrowseItemsPage';
 import ProfilePage from './ProfilePage';
@@ -43,11 +43,11 @@ const Navigation = ({ user, onLogout }) => {
     switch (currentView) {
       case 'dashboard':
         if (user?.role === 'admin') {
-          return <AdminDashboard user={user} onLogout={onLogout} onNavigate={handleNavigate} />;
+          return <AdminDashboard user={user} onLogout={onLogout} />;
         } else if (user?.role === 'vendor') {
-          return <VendorDashboard user={user} onLogout={onLogout} onNavigate={handleNavigate} />;
+          return <VendorDashboard user={user} onLogout={onLogout} />;
         }
-        return <StudentDashboard user={user} onLogout={onLogout} onNavigate={handleNavigate} />;
+        return <StudentDashboard user={user} onLogout={onLogout} />;
       
       case 'add-item':
         return <AddItemPage onBack={() => handleNavigate('dashboard')} />;
@@ -62,7 +62,7 @@ const Navigation = ({ user, onLogout }) => {
         return <ProfilePage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'settings':
-        return <SettingsPage />;
+        return <SettingsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'active-rentals':
         return <ActiveRentalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
@@ -119,7 +119,7 @@ const Navigation = ({ user, onLogout }) => {
         return <PaymentPage onBack={() => handleNavigate('dashboard')} />;
       
       default:
-        return <StudentDashboard user={user} onLogout={onLogout} onNavigate={handleNavigate} />;
+        return <StudentDashboard user={user} onLogout={onLogout} />;
     }
   };
 
