@@ -65,7 +65,7 @@ const Navigation = ({ user, onLogout }) => {
         return <SettingsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'active-rentals':
-        return <ActiveRentalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
+        return <ActiveRentalsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'vendor-analytics':
         return <VendorAnalyticsPage onBack={() => handleNavigate('dashboard')} />;
@@ -89,19 +89,19 @@ const Navigation = ({ user, onLogout }) => {
         return <VendorApplicationsPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'campus-credits':
-        return <CampusCreditsPage onBack={() => handleNavigate('dashboard')} />;
+        return <CampusCreditsPage />;
       
       case 'campus-pulse':
-        return <CampusPulsePage user={user} onBack={() => handleNavigate('dashboard')} />;
+        return <CampusPulsePage />;
       
       case 'leaderboard':
-        return <LeaderboardPage />;
+        return <LeaderboardPage user={user} onBack={() => handleNavigate('dashboard')} />;
       
       case 'squad-up':
-        return <SquadUpPage onBack={() => handleNavigate('dashboard')} />;
+        return <SquadUpPage />;
       
       case 'my-rentals':
-        return <MyRentalsPage user={user} onBack={() => handleNavigate('dashboard')} />;
+        return <MyRentalsPage onBack={() => handleNavigate('dashboard')} />;
       
       case 'liked-items':
         return <LikedItemsPage onBack={() => handleNavigate('dashboard')} />;
