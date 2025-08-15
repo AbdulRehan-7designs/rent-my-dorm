@@ -266,6 +266,66 @@ export type Database = {
           },
         ]
       }
+      escrow_transactions: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string | null
+          dispute_id: string | null
+          escrow_status: string | null
+          id: string
+          payment_id: string | null
+          platform_fee: number
+          release_scheduled_at: string | null
+          released_at: string | null
+          updated_at: string | null
+          vendor_amount: number
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string | null
+          dispute_id?: string | null
+          escrow_status?: string | null
+          id?: string
+          payment_id?: string | null
+          platform_fee: number
+          release_scheduled_at?: string | null
+          released_at?: string | null
+          updated_at?: string | null
+          vendor_amount: number
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string | null
+          dispute_id?: string | null
+          escrow_status?: string | null
+          id?: string
+          payment_id?: string | null
+          platform_fee?: number
+          release_scheduled_at?: string | null
+          released_at?: string | null
+          updated_at?: string | null
+          vendor_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "escrow_transactions_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "rental_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "escrow_transactions_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       group_rental_participants: {
         Row: {
           created_at: string
@@ -477,54 +537,248 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          action_data: Json | null
+          action_url: string | null
+          created_at: string | null
+          delivery_method: string[] | null
+          expires_at: string | null
+          id: string
+          message: string
+          notification_type: string
+          priority: string | null
+          read_at: string | null
+          related_entity_id: string | null
+          related_entity_type: string | null
+          scheduled_for: string | null
+          sent_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          action_data?: Json | null
+          action_url?: string | null
+          created_at?: string | null
+          delivery_method?: string[] | null
+          expires_at?: string | null
+          id?: string
+          message: string
+          notification_type: string
+          priority?: string | null
+          read_at?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          action_data?: Json | null
+          action_url?: string | null
+          created_at?: string | null
+          delivery_method?: string[] | null
+          expires_at?: string | null
+          id?: string
+          message?: string
+          notification_type?: string
+          priority?: string | null
+          read_at?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string | null
+          currency: string | null
+          failure_reason: string | null
+          gateway_response: Json | null
+          gateway_transaction_id: string | null
+          id: string
+          payer_id: string
+          payment_gateway: string | null
+          payment_method: string
+          payment_status: Database["public"]["Enums"]["payment_status"] | null
+          payment_type: string | null
+          processed_at: string | null
+          refund_amount: number | null
+          refunded_at: string | null
+          transaction_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string | null
+          currency?: string | null
+          failure_reason?: string | null
+          gateway_response?: Json | null
+          gateway_transaction_id?: string | null
+          id?: string
+          payer_id: string
+          payment_gateway?: string | null
+          payment_method: string
+          payment_status?: Database["public"]["Enums"]["payment_status"] | null
+          payment_type?: string | null
+          processed_at?: string | null
+          refund_amount?: number | null
+          refunded_at?: string | null
+          transaction_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string | null
+          currency?: string | null
+          failure_reason?: string | null
+          gateway_response?: Json | null
+          gateway_transaction_id?: string | null
+          id?: string
+          payer_id?: string
+          payment_gateway?: string | null
+          payment_method?: string
+          payment_status?: Database["public"]["Enums"]["payment_status"] | null
+          payment_type?: string | null
+          processed_at?: string | null
+          refund_amount?: number | null
+          refunded_at?: string | null
+          transaction_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "rental_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_payer_id_fkey"
+            columns: ["payer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
+          account_status: string | null
+          bio: string | null
           campus_credits: number | null
           campus_verified: boolean | null
           college_id: string | null
+          course: string | null
           created_at: string | null
+          date_of_birth: string | null
           email: string
           full_name: string | null
+          gender: string | null
+          hostel_block: string | null
           id: string
           karma_score: number | null
+          last_active_at: string | null
+          notification_preferences: Json | null
           phone_number: string | null
+          preferred_language: string | null
+          profile_image_url: string | null
+          referral_code: string | null
+          referred_by: string | null
           role: Database["public"]["Enums"]["user_role"]
+          room_number: string | null
+          social_links: Json | null
+          student_id: string | null
           successful_rentals: number | null
           trust_level: string | null
           trust_score: number | null
           updated_at: string | null
+          verification_documents: Json | null
+          year_of_study: number | null
         }
         Insert: {
+          account_status?: string | null
+          bio?: string | null
           campus_credits?: number | null
           campus_verified?: boolean | null
           college_id?: string | null
+          course?: string | null
           created_at?: string | null
+          date_of_birth?: string | null
           email: string
           full_name?: string | null
+          gender?: string | null
+          hostel_block?: string | null
           id: string
           karma_score?: number | null
+          last_active_at?: string | null
+          notification_preferences?: Json | null
           phone_number?: string | null
+          preferred_language?: string | null
+          profile_image_url?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          room_number?: string | null
+          social_links?: Json | null
+          student_id?: string | null
           successful_rentals?: number | null
           trust_level?: string | null
           trust_score?: number | null
           updated_at?: string | null
+          verification_documents?: Json | null
+          year_of_study?: number | null
         }
         Update: {
+          account_status?: string | null
+          bio?: string | null
           campus_credits?: number | null
           campus_verified?: boolean | null
           college_id?: string | null
+          course?: string | null
           created_at?: string | null
+          date_of_birth?: string | null
           email?: string
           full_name?: string | null
+          gender?: string | null
+          hostel_block?: string | null
           id?: string
           karma_score?: number | null
+          last_active_at?: string | null
+          notification_preferences?: Json | null
           phone_number?: string | null
+          preferred_language?: string | null
+          profile_image_url?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          room_number?: string | null
+          social_links?: Json | null
+          student_id?: string | null
           successful_rentals?: number | null
           trust_level?: string | null
           trust_score?: number | null
           updated_at?: string | null
+          verification_documents?: Json | null
+          year_of_study?: number | null
         }
         Relationships: [
           {
@@ -534,61 +788,141 @@ export type Database = {
             referencedRelation: "colleges"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       rental_bookings: {
         Row: {
+          auto_extend_enabled: boolean | null
+          booking_notes: string | null
+          cancelled_by: string | null
+          cancelled_reason: string | null
           created_at: string | null
+          damage_charges: number | null
+          damage_report: string | null
+          deposit_amount: number | null
+          discount_amount: number | null
+          dropoff_location: string | null
+          dropoff_time: string | null
           end_date: string
+          extension_approved: boolean | null
+          extension_requested: boolean | null
           id: string
           item_id: string
           item_received_at: string | null
           item_returned_at: string | null
+          late_fee: number | null
           lister_id: string
+          payment_method: string | null
+          payment_status: Database["public"]["Enums"]["payment_status"] | null
+          pickup_location: string | null
+          pickup_photos: string[] | null
+          pickup_time: string | null
           platform_fee: number | null
+          refund_amount: number | null
+          reminder_sent_at: string | null
           rental_agreement_accepted: boolean | null
           rental_agreement_accepted_at: string | null
           renter_id: string
+          return_photos: string[] | null
           start_date: string
           status: Database["public"]["Enums"]["rental_status"] | null
+          tax_amount: number | null
           total_amount: number
           updated_at: string | null
         }
         Insert: {
+          auto_extend_enabled?: boolean | null
+          booking_notes?: string | null
+          cancelled_by?: string | null
+          cancelled_reason?: string | null
           created_at?: string | null
+          damage_charges?: number | null
+          damage_report?: string | null
+          deposit_amount?: number | null
+          discount_amount?: number | null
+          dropoff_location?: string | null
+          dropoff_time?: string | null
           end_date: string
+          extension_approved?: boolean | null
+          extension_requested?: boolean | null
           id?: string
           item_id: string
           item_received_at?: string | null
           item_returned_at?: string | null
+          late_fee?: number | null
           lister_id: string
+          payment_method?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"] | null
+          pickup_location?: string | null
+          pickup_photos?: string[] | null
+          pickup_time?: string | null
           platform_fee?: number | null
+          refund_amount?: number | null
+          reminder_sent_at?: string | null
           rental_agreement_accepted?: boolean | null
           rental_agreement_accepted_at?: string | null
           renter_id: string
+          return_photos?: string[] | null
           start_date: string
           status?: Database["public"]["Enums"]["rental_status"] | null
+          tax_amount?: number | null
           total_amount: number
           updated_at?: string | null
         }
         Update: {
+          auto_extend_enabled?: boolean | null
+          booking_notes?: string | null
+          cancelled_by?: string | null
+          cancelled_reason?: string | null
           created_at?: string | null
+          damage_charges?: number | null
+          damage_report?: string | null
+          deposit_amount?: number | null
+          discount_amount?: number | null
+          dropoff_location?: string | null
+          dropoff_time?: string | null
           end_date?: string
+          extension_approved?: boolean | null
+          extension_requested?: boolean | null
           id?: string
           item_id?: string
           item_received_at?: string | null
           item_returned_at?: string | null
+          late_fee?: number | null
           lister_id?: string
+          payment_method?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"] | null
+          pickup_location?: string | null
+          pickup_photos?: string[] | null
+          pickup_time?: string | null
           platform_fee?: number | null
+          refund_amount?: number | null
+          reminder_sent_at?: string | null
           rental_agreement_accepted?: boolean | null
           rental_agreement_accepted_at?: string | null
           renter_id?: string
+          return_photos?: string[] | null
           start_date?: string
           status?: Database["public"]["Enums"]["rental_status"] | null
+          tax_amount?: number | null
           total_amount?: number
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "rental_bookings_cancelled_by_fkey"
+            columns: ["cancelled_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "rental_bookings_item_id_fkey"
             columns: ["item_id"]
@@ -616,68 +950,128 @@ export type Database = {
         Row: {
           availability_end_date: string | null
           availability_start_date: string | null
+          avg_rating: number | null
           booking_type: Database["public"]["Enums"]["booking_type"] | null
+          boost_credits_used: number | null
+          brand: string | null
+          cancellation_policy: string | null
           category: Database["public"]["Enums"]["item_category"]
           condition: Database["public"]["Enums"]["item_condition"]
           created_at: string | null
+          damage_policy: string | null
           deposit_amount: number | null
           description: string | null
+          featured_until: string | null
           id: string
           image_urls: string[] | null
+          included_accessories: string[] | null
+          insurance_covered: boolean | null
           is_active: boolean | null
           is_available: boolean | null
           lister_id: string
+          location_details: Json | null
+          max_rental_days: number | null
+          min_rental_days: number | null
+          model: string | null
+          original_price: number | null
+          pickup_instructions: string | null
           price_per_day: number
+          quality_score: number | null
           rental_count: number | null
+          safety_verified: boolean | null
           tags: string[] | null
           title: string
+          total_earnings: number | null
+          total_reviews: number | null
           updated_at: string | null
+          usage_guidelines: string | null
           video_url: string | null
           view_count: number | null
+          year_purchased: number | null
         }
         Insert: {
           availability_end_date?: string | null
           availability_start_date?: string | null
+          avg_rating?: number | null
           booking_type?: Database["public"]["Enums"]["booking_type"] | null
+          boost_credits_used?: number | null
+          brand?: string | null
+          cancellation_policy?: string | null
           category: Database["public"]["Enums"]["item_category"]
           condition: Database["public"]["Enums"]["item_condition"]
           created_at?: string | null
+          damage_policy?: string | null
           deposit_amount?: number | null
           description?: string | null
+          featured_until?: string | null
           id?: string
           image_urls?: string[] | null
+          included_accessories?: string[] | null
+          insurance_covered?: boolean | null
           is_active?: boolean | null
           is_available?: boolean | null
           lister_id: string
+          location_details?: Json | null
+          max_rental_days?: number | null
+          min_rental_days?: number | null
+          model?: string | null
+          original_price?: number | null
+          pickup_instructions?: string | null
           price_per_day: number
+          quality_score?: number | null
           rental_count?: number | null
+          safety_verified?: boolean | null
           tags?: string[] | null
           title: string
+          total_earnings?: number | null
+          total_reviews?: number | null
           updated_at?: string | null
+          usage_guidelines?: string | null
           video_url?: string | null
           view_count?: number | null
+          year_purchased?: number | null
         }
         Update: {
           availability_end_date?: string | null
           availability_start_date?: string | null
+          avg_rating?: number | null
           booking_type?: Database["public"]["Enums"]["booking_type"] | null
+          boost_credits_used?: number | null
+          brand?: string | null
+          cancellation_policy?: string | null
           category?: Database["public"]["Enums"]["item_category"]
           condition?: Database["public"]["Enums"]["item_condition"]
           created_at?: string | null
+          damage_policy?: string | null
           deposit_amount?: number | null
           description?: string | null
+          featured_until?: string | null
           id?: string
           image_urls?: string[] | null
+          included_accessories?: string[] | null
+          insurance_covered?: boolean | null
           is_active?: boolean | null
           is_available?: boolean | null
           lister_id?: string
+          location_details?: Json | null
+          max_rental_days?: number | null
+          min_rental_days?: number | null
+          model?: string | null
+          original_price?: number | null
+          pickup_instructions?: string | null
           price_per_day?: number
+          quality_score?: number | null
           rental_count?: number | null
+          safety_verified?: boolean | null
           tags?: string[] | null
           title?: string
+          total_earnings?: number | null
+          total_reviews?: number | null
           updated_at?: string | null
+          usage_guidelines?: string | null
           video_url?: string | null
           view_count?: number | null
+          year_purchased?: number | null
         }
         Relationships: [
           {
@@ -693,35 +1087,68 @@ export type Database = {
         Row: {
           booking_id: string
           comment: string | null
+          communication_rating: number | null
+          condition_rating: number | null
           created_at: string | null
+          delivery_rating: number | null
+          helpful_votes: number | null
           id: string
           is_public: boolean | null
           item_care_rating: number | null
+          photos: string[] | null
           rating: number | null
+          reported_count: number | null
+          response_at: string | null
+          response_text: string | null
+          review_type: string | null
           reviewed_id: string
           reviewer_id: string
+          value_rating: number | null
+          verified_purchase: boolean | null
         }
         Insert: {
           booking_id: string
           comment?: string | null
+          communication_rating?: number | null
+          condition_rating?: number | null
           created_at?: string | null
+          delivery_rating?: number | null
+          helpful_votes?: number | null
           id?: string
           is_public?: boolean | null
           item_care_rating?: number | null
+          photos?: string[] | null
           rating?: number | null
+          reported_count?: number | null
+          response_at?: string | null
+          response_text?: string | null
+          review_type?: string | null
           reviewed_id: string
           reviewer_id: string
+          value_rating?: number | null
+          verified_purchase?: boolean | null
         }
         Update: {
           booking_id?: string
           comment?: string | null
+          communication_rating?: number | null
+          condition_rating?: number | null
           created_at?: string | null
+          delivery_rating?: number | null
+          helpful_votes?: number | null
           id?: string
           is_public?: boolean | null
           item_care_rating?: number | null
+          photos?: string[] | null
           rating?: number | null
+          reported_count?: number | null
+          response_at?: string | null
+          response_text?: string | null
+          review_type?: string | null
           reviewed_id?: string
           reviewer_id?: string
+          value_rating?: number | null
+          verified_purchase?: boolean | null
         }
         Relationships: [
           {
@@ -902,12 +1329,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_platform_fee: {
+        Args: { amount: number }
+        Returns: number
+      }
+      generate_referral_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       update_college_statistics: {
         Args: Record<PropertyKey, never> | { college_id_param: string }
         Returns: undefined
       }
     }
     Enums: {
+      booking_status:
+        | "pending"
+        | "confirmed"
+        | "active"
+        | "completed"
+        | "cancelled"
+        | "disputed"
       booking_type: "instant" | "request"
       dispute_status: "open" | "under_review" | "resolved" | "closed"
       item_category:
@@ -960,6 +1402,22 @@ export type Database = {
         | "gaming"
         | "other"
       item_condition: "new" | "like_new" | "good" | "fair" | "functional"
+      payment_status: "pending" | "paid" | "failed" | "refunded" | "partial"
+      rental_category:
+        | "electronics"
+        | "furniture"
+        | "books"
+        | "vehicles"
+        | "sports"
+        | "musical_instruments"
+        | "appliances"
+        | "fashion"
+        | "tools"
+        | "gaming"
+        | "photography"
+        | "study_materials"
+        | "camping"
+        | "other"
       rental_status:
         | "pending"
         | "confirmed"
@@ -1095,6 +1553,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      booking_status: [
+        "pending",
+        "confirmed",
+        "active",
+        "completed",
+        "cancelled",
+        "disputed",
+      ],
       booking_type: ["instant", "request"],
       dispute_status: ["open", "under_review", "resolved", "closed"],
       item_category: [
@@ -1148,6 +1614,23 @@ export const Constants = {
         "other",
       ],
       item_condition: ["new", "like_new", "good", "fair", "functional"],
+      payment_status: ["pending", "paid", "failed", "refunded", "partial"],
+      rental_category: [
+        "electronics",
+        "furniture",
+        "books",
+        "vehicles",
+        "sports",
+        "musical_instruments",
+        "appliances",
+        "fashion",
+        "tools",
+        "gaming",
+        "photography",
+        "study_materials",
+        "camping",
+        "other",
+      ],
       rental_status: [
         "pending",
         "confirmed",
